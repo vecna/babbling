@@ -1,0 +1,24 @@
+{
+  "name": "babbling-computer",
+  "version": "0.0.1",
+  "description": "a bunch of scripts to study how babbling computer inform the humans",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vecna/babbling-computer.git"
+  },
+  "keywords": [
+    "algorithm-accountability",
+    "AI audit"
+  ],
+  "author": "Claudio Agosti",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/vecna/babbling-computer/issues"
+  },
+  "homepage": "https://github.com/vecna/babbling-computer#readme",
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "zx": "^7.2.2"
+  }
+}

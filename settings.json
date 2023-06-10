@@ -1,0 +1,11 @@
+{
+  "noco": {
+    "server":"https://babbling.computer/api/v1",
+    "necessaryThing": "doqzK4Ke0zi0ph4wmy_ippS7ZeghyjnohIATjVSW"
+  },
+  "projectName": "zero",
+  "etherpad": {
+    "server":"https://babbling.computer/api/1",
+    "necessaryThing":"f6fcc5d8877d2f9b8234d3de8d1443f9c3a8eb390939e1a557112add363caddb"
+  }
+}
