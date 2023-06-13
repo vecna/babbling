@@ -7,5 +7,9 @@
   "etherpad": {
     "server":"https://babbling.computer/api/1",
     "necessaryThing":"f6fcc5d8877d2f9b8234d3de8d1443f9c3a8eb390939e1a557112add363caddb"
+  },
+  "semantic": {
+    "server":"https://api.dandelion.eu/datatxt/nex/v1",
+    "necessaryThing":"d4d34dfae3c949df8af7315e9bb85f7b"
   }
 }
