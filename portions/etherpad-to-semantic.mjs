@@ -54,4 +54,4 @@ for (const exchange of material) {
   exchange.annotations = annotations;
 }
 
-console.log(JSON.stringify(material, null, 2));
+console.log(JSON.stringify(material, null, 2));w

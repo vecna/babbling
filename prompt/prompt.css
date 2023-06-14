@@ -1,0 +1,123 @@
+/* this is the style for the file in prompt/index.html
+ * it contain a style for <sections> becoming full page smooth scroll */
+
+section {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    overflow: hidden;
+    position: relative;
+    background-color: #fff;
+    color: #000;
+    font-size: 2rem;
+    font-weight: 300;
+    text-align: center;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    border: 1px solid #000;
+    border-radius: 0.5rem;
+    margin: 0.5rem;
+    box-shadow: 0 0 0.5rem #000;
+    transition: all 0.5s ease;
+}
+
+/* this is used in special slides that need to start from top */
+.from--top {
+    justify-content: normal;
+}
+
+/* these for the input grid */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.grid-item {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+}
+
+/* imbellishment of the input */
+textarea {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    resize: vertical;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #4d90fe;
+    box-shadow: 0 0 5px rgba(77, 144, 254, 0.5);
+}
+
+/* this is used for the 'subject' */
+.larger {
+    width: 500px !important;
+    height: 2em;
+    border-bottom: 2px solid black !important;
+    border-top: 2px solid black !important;
+    border-left: unset !important;
+    border-right: unset !important;
+}
+
+/* font */
+@font-face {
+    font-family: 'Comfortaa';
+    src: url('Comfortaa/static/Comfortaa-Regular.ttf') format('truetype');
+}
+
+body {
+    font-family: 'Comfortaa', sans-serif;
+}
+
+.description {
+    line-height: 0;
+    font-size: 0.8em;
+}
+
+.colorful-button {
+    background: linear-gradient(to right, fuchsia, rgb(12, 101, 235), yellow);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* prompt reporting, each prompt need to looks like a computer generated output */
+.prompt {
+    font-family: 'Courier New', Courier, monospace;
+    text-align: left;
+    font-size: 0.5em;
+    padding: 0 1rem;
+    word-break: break-all;
+    box-sizing: border-box;
+    border: 1px solid #000;
+    border-radius: 0.5rem;
+    margin: 0.5rem;
+    box-shadow: 0 0 0.5rem #000;
+    transition: all 0.5s ease;
+}
+
+.button-list {
+    float: left;
+}
+.prompt-copy {
+    width: 300px;
+}

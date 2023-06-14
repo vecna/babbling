@@ -9,9 +9,23 @@ The scripts normally works in conjunction with the servers (nocodb, etherpad, an
 This directory contains `package.json` for `npm` and `requirements.txt` for `pip`. You got it: it is like eating 🍫 with 🐟.
 
 ```
+.
+├── ChatGPT I-O collector.user.js
+├── LICENSE
+├── package.json
+├── package-lock.json
+├── portions
+│   ├── etherpad-to-semantic.mjs
+│   ├── id.mjs
+│   ├── semantic.mjs
+│   ├── write-to-etherpad.mjs
+│   └── write-to-noco.mjs
+├── README.md
+├── requirements.txt
+└── settings.json
 ```
 
-### Producton tool n.1
+### (data) Production tool n.1
 
 Inspired by https://simonwillison.net/2023/May/18/cli-tools-for-llms/
 
@@ -31,9 +45,10 @@ Sure, the number pi is 3.14159265358979323846 (and so on, it is an irrational an
 $ python babbling/bin/llm logs
 ```
 
-### Production tool n.2
+### (data) Production tool n.2
 
 You should install [ViolentMonkey](https://violentmonkey.github.io/) or any other compatible tool that runs [Userscripts](https://en.wikipedia.org/wiki/Userscript)
+
 
 ### Test sequence 
 
