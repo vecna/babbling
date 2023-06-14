@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import L from 'debug';
 const debug = L('lib:semantic');
 const querystring = require('querystring');

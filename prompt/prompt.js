@@ -40,7 +40,7 @@ async function generatePrompt() {
 
     const subject = document.getElementById("subject").value;
     if (!subject || subject.length == 0) {
-        document.getElementById("prompt-list").textContent = "Subject is required";
+        document.getElementById("prompt-list").parentNode.innerHTML = `<img src="/subject-missing.jpeg" />`;
         return;
     }
 
@@ -100,7 +100,7 @@ function produceHTML(prompts) {
           </div>
           <div class="button-list">
             <button class="prompt-copy" id="copy--${prompt.hash}" onclick="copyToClipboard('${prompt.hash}')">Copy prompt</button>
-            <button class="prompt-copy" onclick="copyToClipboard('${prompt.hash}')">Visit ${prompt.hash}</button>
+            <button class="prompt-copy" onclick="alert('Not implemented')">Visit ${prompt.hash}</button>
           </div>
         </div>`;
         return memo + promptHTML;
@@ -114,5 +114,4 @@ function copyToClipboard(hash) {
     const text = document.getElementById(`prompt--${hash}`).textContent;
     navigator.clipboard.writeText(text);
     $(`#copy--${hash}`).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
-
 }

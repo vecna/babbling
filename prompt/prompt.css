@@ -49,6 +49,11 @@ label {
     font-weight: bold;
 }
 
+.subject-container {
+    color: #4d90fe;
+    padding-top: 30px;
+}
+
 /* imbellishment of the input */
 textarea {
     padding: 10px;

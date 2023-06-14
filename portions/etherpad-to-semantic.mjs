@@ -13,6 +13,13 @@ if(!argv.pad) {
 const settings = await fs.readJSON("settings.json")
 const padName = _.startsWith('http', argv.pad) ? argv.pad.split('/').pop() : argv.pad;
 console.log(`Pad name: ${padName}`);
+const padfile = path.join('semantics', `${padName}.json`);
+
+if(fs.existsSync(padfile)) {
+  console.log(`Pad ${padName} already fetched`);
+  process.exit(0);
+}
+
 const url = `${settings.etherpad.server}/getText?padID=${padName}&apikey=${settings.etherpad.necessaryThing}`;
 
 const response = await fetch(url);
@@ -54,4 +61,5 @@ for (const exchange of material) {
   exchange.annotations = annotations;
 }
 
-console.log(JSON.stringify(material, null, 2));w
+console.log(`Writing to ${padfile}.json`);
+fs.writeJSON(padfile, material, {spaces: 2});
