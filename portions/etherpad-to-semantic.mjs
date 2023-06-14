@@ -61,5 +61,5 @@ for (const exchange of material) {
   exchange.annotations = annotations;
 }
 
-console.log(`Writing to ${padfile}.json`);
+console.log(`Writing to ${padfile}`);
 fs.writeJSON(padfile, material, {spaces: 2});

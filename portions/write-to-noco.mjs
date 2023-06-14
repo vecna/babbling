@@ -2,6 +2,9 @@
 
 /* this script just test the connection to the noco server */
 
+console.log("nope, this was just a test");
+process.exit(1)
+
 const settings = await fs.readJSON("settings.json")
 const projectName = settings.projectName
 const url = `${settings.noco.server}/db/data/v1/zero/activities`;

@@ -8,22 +8,17 @@ The scripts normally works in conjunction with the servers (nocodb, etherpad, an
 
 This directory contains `package.json` for `npm` and `requirements.txt` for `pip`. You got it: it is like eating 🍫 with 🐟.
 
-```
-.
-├── ChatGPT I-O collector.user.js
-├── LICENSE
-├── package.json
-├── package-lock.json
-├── portions
-│   ├── etherpad-to-semantic.mjs
-│   ├── id.mjs
-│   ├── semantic.mjs
-│   ├── write-to-etherpad.mjs
-│   └── write-to-noco.mjs
-├── README.md
-├── requirements.txt
-└── settings.json
-```
+### Test sequence 
+
+**Metamorphic testing**, confortably described in this nice blogpost: https://www.giskard.ai/knowledge/how-to-test-ml-models-4-metamorphic-testing is the first attempt I made.
+
+In this case was also a necessary step to understand how to _distill_ information our of a large text corpus, because I don't want to read everything, because the `Distillation`/`Translation` tools have been developed to ingest the result of the `Production` tools
+
+1. OpenAI
+2. produce [a pad](https://babbling.computer/p/33b38c8c-a51e-40c9-b2a8-552de311480d), like ID: `33b38c8c-a51e-40c9-b2a8-552de311480d`.
+3. `portions/etherpad-to-semantic.mjs --pad 33b38c8c-a51e-40c9-b2a8-552de311480d`
+4. `portions/semantic-to-noco.mjs --pad 33b38c8c-a51e-40c9-b2a8-552de311480d`
+5. `portions/noco-to-observable.mjs`
 
 ### (data) Production tool n.1
 
@@ -50,8 +45,3 @@ $ python babbling/bin/llm logs
 You should install [ViolentMonkey](https://violentmonkey.github.io/) or any other compatible tool that runs [Userscripts](https://en.wikipedia.org/wiki/Userscript)
 
 
-### Test sequence 
-
-**Metamorphic testing**, confortably described in this nice blogpost: https://www.giskard.ai/knowledge/how-to-test-ml-models-4-metamorphic-testing is the first attempt I made.
-
-In this case was also a necessary step to understand how to _distill_ information our of a large text corpus, because I don't want to read everything, because the `Distillation`/`Translation` tools have been developed to ingest the result of the `Production` tools

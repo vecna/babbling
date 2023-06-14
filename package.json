@@ -19,6 +19,7 @@
   "dependencies": {
     "crypto": "^1.0.1",
     "debug": "^4.3.4",
+    "diff": "^5.1.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "zx": "^7.2.2"
