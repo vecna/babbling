@@ -1,36 +1,42 @@
-<html>
-	<head>
-	</head>
-	<body>
+<!-- this html in the head as the title "LLM diff", and 
+ includes diff.js and the style diff.css -->
+<!DOCTYPE html>
 
+<head>
+  <title>LLM diff</title>
+  <script src="diff.js"></script>
 
-<pre id="display"></pre>
-<script src="diff.js"></script>
-<script>
-const one = 'beep boop',
-    other = 'beep boob blah',
-    color = '';
-    
-let span = null;
+  <!-- third parties -->
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+    integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 
-const diff = Diff.diffChars(one, other),
-    display = document.getElementById('display'),
-    fragment = document.createDocumentFragment();
+  <!-- below our tools -->
+  <link rel="stylesheet" href="diffllm.css">
+  <script src="diffllm.js"></script>
+</head>
 
-diff.forEach((part) => {
-  // green for additions, red for deletions
-  // grey for common parts
-  const color = part.added ? 'green' :
-    part.removed ? 'red' : 'grey';
-  span = document.createElement('span');
-  span.style.color = color;
-  span.appendChild(document
-    .createTextNode(part.value));
-  fragment.appendChild(span);
-});
+<body>
 
-display.appendChild(fragment);
-</script>
+  <div id="error"></div>
 
-	</body>
+  <div class="container">
+    <pre id="display"></pre>
+  </div>
+
+  <ol id="list-of-qa">
+
+  </ol>
+
+  <div class="pad-insert">
+    <input type="text" name="input" value="33b38c8c-a51e-40c9-b2a8-552de311480d" size="50">
+    <button onclick="initDiff">Load pad</button>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", initDiff);
+  </script>
+
+</body>
+
 </html>

@@ -1,0 +1,40 @@
+#error {
+    color: red;
+    font-weight: bold;
+    font-size: 3em;
+}
+
+#display {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+}
+
+.pad-insert {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 2em;
+}
+
+.prompt {
+    cursor: pointer;
+}
+
+.lastp {
+    background-color: lightsalmon
+}
+
+.currentp {
+    background-color: lightgreen
+}
+
+
+input[type="text"] {
+    width: 200px;
+    padding: 5px;
+}
+
+input[type="submit"] {
+    margin-left: 10px;
+}
