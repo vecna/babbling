@@ -29,6 +29,12 @@ if (!fs.existsSync(padfile)) {
 const semantic = await fs.readJSON(padfile);
 const body = [];
 for(const o of semantic) {
+  if(!o.annotations) {
+	console.log("NO ANNOTATION HERE?!");
+        console.log(o);
+	continue;
+  }
+
   for(const a of o.annotations) {
     const annotation = {
       ..._.pick(a, ['start', 'end', 'confidence', 'title', 'uri', 'label']),
