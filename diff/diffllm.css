@@ -17,6 +17,10 @@
     padding-top: 2em;
 }
 
+.pad-input {
+  width: 400px;
+}
+
 .prompt {
     cursor: pointer;
 }
