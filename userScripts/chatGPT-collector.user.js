@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         ChatGPT I/O collector
 // @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  try to take over the world!
+// @version      0.1.4
+// @description  try to make chatbot a bit more understandable
 // @author       vecna
 // @match        https://chat.openai.com/*
 // @icon         https://img.icons8.com/nolan/2x/chatgpt.png
@@ -23,29 +23,31 @@ function getRandomColor() {
 }
 
 const etherpad = {
-  server:"https://babbling.computer",
-  necessaryThing:"f6fcc5d8877d2f9b8234d3de8d1443f9c3a8eb390939e1a557112add363caddb"
+  server: "https://babbling.computer",
+  necessaryThing: "f6fcc5d8877d2f9b8234d3de8d1443f9c3a8eb390939e1a557112add363caddb"
 };
 
 async function createPad(url, material) {
   // Material is a collecton that should be trasformed in the way
   // that's looks fine for the pad consumer.
 
-  const createResponse = await fetch(url, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: `text=${encodeURIComponent(JSON.stringify(material, null,2))}`,
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-  });
-  console.log(`HTTP Status ${createResponse.status}`);
-  const results = await createResponse.text();
-  console.log(`Response: ${results}`);
-  $("#export--button").css("background-color", getRandomColor());
+  try {
+    const createResponse = await fetch(url, {
+      method: 'POST',
+      body: `text=${encodeURIComponent(JSON.stringify(material, null, 2))}`,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+    const results = await createResponse.json();
+    console.log(results);
+    $("#export--button").css("background-color", getRandomColor());
+    return createResponse;
+  } catch (error) {
+    console.log(error.message);
+    return { status: 500 };
+  }
 }
 
-(async function() {
-  // here we accumulate data
-  let data = [];
+(async function () {
 
   // button "export" injected in the DOM
   const exportButton = document.createElement('button');
@@ -65,32 +67,45 @@ async function createPad(url, material) {
   console.log(chatList.text());
 
   // Event handler for the click
-  exportButton.addEventListener('click', async function() {
+  exportButton.addEventListener('click', async function () {
     // This is the logic to pick the URL, create the pad
 
     const chat = document.querySelectorAll('.whitespace-pre-wrap.break-words');
     // <div class=​"min-h-[20px]​ flex flex-col items-start gap-4 whitespace-pre-wrap break-words">​…​</div>​flex
     // main difference among these elements is the number of HTML child
 
-    const material = _.map(chat, function(e) {
-        const turndownService = new TurndownService();
-        if(e.childElementCount === 0) {
-            // it is a prompt
-            return {
-                type: 'prompt',
-                text: e.textContent,
-            }
+    const material = _.map(chat, function (e, chatIndex) {
+      const turndownService = new TurndownService();
+      const retval = {
+        type: 'prompt'
+      };
+      if (e.querySelector('.prose') === null) {
+        console.log(`Element ${chatIndex} is a prompt`);
+        // it is a prompt. Check if the prompt
+        // respect our formast or if is a free format
+        const babblingFormat = e.textContent.match(/$[A-Z].*:\ /);
+        if (babblingFormat) {
+          // it is a babbling prompt
+          const chunks = e.textContent.split("\n            \n");
+          retval.parameters = chunks[0];
+          retval.text = chunks[1];
         } else {
-            // it is an answer: TODO can be improved in spotting
-            // if there is a visible or hidden button to move among
-            // different versions of the answer.
-            return {
-                 type: 'answer',
-                 text: e.textContent,
-                 // html: e.innerHTML,
-                 md: turndownService.turndown(e.innerHTML),
-            }
+          retval.type = 'free-format-prompt';
+          retval.text = e.textContent;
         }
+        return retval;
+      } else {
+        console.log(`Element ${chatIndex} is an answer`);
+        // it is an answer: TODO can be improved in spotting
+        // if there is a visible or hidden button to move among
+        // different versions of the answer.
+        return {
+          type: 'answer',
+          text: e.textContent,
+          // html: e.innerHTML,
+          md: turndownService.turndown(e.innerHTML),
+        }
+      }
     });
     console.log(`FYI we're talking ${JSON.stringify(material).length} bytes`);
 
@@ -100,13 +115,16 @@ async function createPad(url, material) {
     const padUrl = `${etherpad.server}/p/${padName}`;
     const url = `${etherpad.server}/api/1/createPad?apikey=${etherpad.necessaryThing}&padID=${padName}`;
 
-    await createPad(url, material);
-    console.log(`It should have created the pad: ${padUrl}`);
+    const ret = await createPad(url, material);
+    if (ret.status !== 200) {
+      alert(`Error recorded in creating the pad! ${ret.status}`);
+    } else {
+      console.log(`It should have created the pad: ${padUrl}`);
+      alert(`Data sent to ${padUrl}`);
+    }
 
     // Before I was using the clipboard with
     // GM_setClipboard(data);
 
-    // Feedback visivo all'utente
-    alert(`Data sent to ${padUrl}`);
   });
 })();
