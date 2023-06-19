@@ -18,7 +18,7 @@ In this case was also a necessary step to understand how to _distill_ informatio
 2. produce [a pad](https://babbling.computer/p/33b38c8c-a51e-40c9-b2a8-552de311480d), like ID: `33b38c8c-a51e-40c9-b2a8-552de311480d`.
 3. `portions/etherpad-to-semantic.mjs --pad 33b38c8c-a51e-40c9-b2a8-552de311480d`
 4. `portions/semantic-to-noco.mjs --pad 33b38c8c-a51e-40c9-b2a8-552de311480d`
-5. `portions/noco-to-observable.mjs`
+5. `portions/noco-to-observable.mjs --chatId !$`
 
 ### (data) Production tool n.1
 

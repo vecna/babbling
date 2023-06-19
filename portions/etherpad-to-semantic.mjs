@@ -44,9 +44,15 @@ const material = _.reduce(aquired, (memo, exchange) => {
     counter,
     type: exchange.type,
     size: exchange.text.length,
-    text: exchange.text,
-    hash: hash(`${exchange.text}${exchange.type}`)
+    text: exchange.text.trim(),
   }
+  if(exchange.parameters) {
+    o.parameters = exchange.parameters;
+    o.hash = hash(`${exchange.text}${exchange.type}${JSON.stringify(exchange.parameters)}`)
+  } else {
+    o.hash = hash(`${exchange.text}${exchange.type}`)
+  }
+
   counter++;
   memo.push(o);
   return memo;

@@ -2,6 +2,7 @@
 babbling
 *_API_KEY
 semantics/*
+*-dump.json
 
 # Logs
 logs
