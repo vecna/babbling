@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ChatGPT I/O collector
-// @namespace    http://tampermonkey.net/
-// @version      0.1.4
+// @namespace    https://babbling.computer
+// @version      0.1.10
 // @description  try to make chatbot a bit more understandable
 // @author       vecna
 // @match        https://chat.openai.com/*
@@ -30,7 +30,6 @@ const etherpad = {
 async function createPad(url, material) {
   // Material is a collecton that should be trasformed in the way
   // that's looks fine for the pad consumer.
-
   try {
     const createResponse = await fetch(url, {
       method: 'POST',
@@ -38,12 +37,11 @@ async function createPad(url, material) {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
     const results = await createResponse.json();
-    console.log(results);
     $("#export--button").css("background-color", getRandomColor());
-    return createResponse;
+    return results;
   } catch (error) {
     console.log(error.message);
-    return { status: 500 };
+    return { code: 500, message: error.message };
   }
 }
 
@@ -83,11 +81,20 @@ async function createPad(url, material) {
         console.log(`Element ${chatIndex} is a prompt`);
         // it is a prompt. Check if the prompt
         // respect our formast or if is a free format
-        const babblingFormat = e.textContent.match(/$[A-Z].*:\ /);
+        const babblingFormat = e.textContent.match(/\n(\ ).*[A-Z].*:\ /);
+        console.log(babblingFormat);
+        // it should match with index: 0
         if (babblingFormat) {
           // it is a babbling prompt
           const chunks = e.textContent.split("\n            \n");
-          retval.parameters = chunks[0];
+          retval.parameters = _.reduce(
+            chunks[0].trim().split("\n"), function(memo, e) {
+              const blob = e.split(':');
+              _.set(memo, blob[0].trim(), blob[1].trim());
+              return memo
+            }, {}
+          );
+          retval.type = 'babbling-prompt';
           retval.text = chunks[1];
         } else {
           retval.type = 'free-format-prompt';
@@ -116,15 +123,13 @@ async function createPad(url, material) {
     const url = `${etherpad.server}/api/1/createPad?apikey=${etherpad.necessaryThing}&padID=${padName}`;
 
     const ret = await createPad(url, material);
-    if (ret.status !== 200) {
-      alert(`Error recorded in creating the pad! ${ret.status}`);
-    } else {
+    if (ret.code === 0) {
       console.log(`It should have created the pad: ${padUrl}`);
       alert(`Data sent to ${padUrl}`);
+    } else {
+      alert(`Error recorded in creating the pad! ${ret.message}`);
     }
-
     // Before I was using the clipboard with
     // GM_setClipboard(data);
-
   });
 })();

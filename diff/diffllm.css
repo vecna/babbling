@@ -10,6 +10,12 @@
     overflow-x: auto;
 }
 
+.param-name {
+    background-color: lightskyblue;
+    border: 1px solid black;
+    padding: 3px;
+}
+
 .pad-insert {
     display: flex;
     justify-content: center;
@@ -18,7 +24,7 @@
 }
 
 .pad-input {
-  width: 400px;
+    width: 400px;
 }
 
 .prompt {

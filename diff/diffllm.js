@@ -31,7 +31,7 @@ const selected = {
 async function initDiff() {
 
   $("#list-of-qa").empty();
-  let offered = $("input[type='text']")[0].value ;
+  let offered = $("input[type='text']")[0].value;
   console.log(offered)
   offered = offered.length ? offered : "33b38c8c-a51e-40c9-b2a8-552de311480d";
 
@@ -48,16 +48,38 @@ async function initDiff() {
    * the content of the list if the feature 'text',
    * and the <li> need to handle a click event, because
    * we need to react by the ID selected */
-  const prompts = _.filter(data, { 'type': 'prompt' });
+  const prompts = _.filter(data, { 'type': 'prompt' }).length ?
+    _.filter(data, { 'type': 'prompt' }) :
+    _.filter(data, { 'type': 'babbling-prompt' });
+
   const promptList = document.getElementById('list-of-qa');
   _.each(prompts, (prompt, i) => {
     const promptItem = document.createElement('li');
     promptItem.setAttribute('id', `prompt-${i}`);
     prompt.id = `prompt-${i}`;
     promptItem.setAttribute('class', 'prompt');
-    promptItem.appendChild(document.createTextNode(prompt.text));
+
+    /* if the prompt is a babbling-prompt, we need to list params */
+    if (prompt.parameters) {
+      const l = _.map(prompt.parameters, function(value, paramName) {
+        return `<code class="param-name">${paramName}</code>: ${value}`;
+      }).join(', ');
+      promptItem.innerHTML = l;
+    }
+    else {
+      promptItem.appendChild(document.createTextNode(prompt.text));
+    }
+
     promptList.appendChild(promptItem);
   });
+
+  /* if the prompt is a babbling-prompt, we need to put the main text on top */
+  if (_.first(prompts).type === 'babbling-prompt') {
+    console.log("babbling-prompt", prompts)
+    const promptText = _.first(prompts).text;
+    /* we need to display this text above the 'li' elements, on a dedicated div */
+    $("#babbling-prompt").text(promptText);
+  }
 
   /* now we need to initialize the display with the first */
   selected.current = 0;
@@ -67,6 +89,13 @@ async function initDiff() {
     if (!_.last(memo).prompt) {
       _.last(memo).id = o.id;
       _.last(memo).prompt = o.text;
+
+      // prompt type can be
+      // 'free-format-prompt' or 'babbling-prompt'
+      _.last(memo).type = o.type;
+      // and 'babbling-prompt' have parameters
+      if (o.paramters)
+        _.last(memo).parameters = o.parameters;
     } else {
       _.last(memo).answer = o.text
       _.last(memo).md = o.md
