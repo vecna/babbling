@@ -62,8 +62,8 @@ async function initDiff() {
     /* if the prompt is a babbling-prompt, we need to list params */
     if (prompt.parameters) {
       const l = _.map(prompt.parameters, function(value, paramName) {
-        return `<code class="param-name">${paramName}</code>: ${value}`;
-      }).join(', ');
+        return `<code class="param-name">${paramName}</code> ${value}`;
+      }).join(' ');
       promptItem.innerHTML = l;
     }
     else {
