@@ -1,6 +1,8 @@
 
 async function fetchFromPad(padId) {
   /* this function fetch from an etherpad */
+
+  $("#display").empty();
   const url = `https://babbling.computer/api/1/getText?padID=${padId}&apikey=f6fcc5d8877d2f9b8234d3de8d1443f9c3a8eb390939e1a557112add363caddb`;
   const response = await fetch(url);
 
@@ -75,7 +77,6 @@ async function initDiff() {
 
   /* if the prompt is a babbling-prompt, we need to put the main text on top */
   if (_.first(prompts).type === 'babbling-prompt') {
-    console.log("babbling-prompt", prompts)
     const promptText = _.first(prompts).text;
     /* we need to display this text above the 'li' elements, on a dedicated div */
     $("#babbling-prompt").text(promptText);
@@ -133,9 +134,12 @@ async function initDiff() {
 
 function displayDiff(one, other) {
 
-  const diff = Diff.diffChars(one, other),
-    display = document.getElementById('display'),
-    fragment = document.createDocumentFragment();
+  const diff = diffMode === 'Char' ?
+    Diff.diffChars(one, other) :
+    Diff.diffLines(one, other);
+
+  const display = document.getElementById('display');
+  const fragment = document.createDocumentFragment();
 
   diff.forEach((part) => {
     // green for additions, red for deletions
@@ -150,4 +154,18 @@ function displayDiff(one, other) {
   });
 
   display.appendChild(fragment);
+}
+
+/* this variable define if the diff is by char or by line */
+let diffMode = 'Line';
+
+function switchMode() {
+
+  diffMode = ('Char' === diffMode) ? 'Line' : 'Char';
+  $("#switch-mode").text(`by ${diffMode}`);
+
+  const display = document.getElementById('display');
+  display.innerHTML = '';
+  displayDiff(qamap[selected.last].md, qamap[selected.current].md);
+
 }
