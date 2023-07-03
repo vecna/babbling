@@ -83,7 +83,7 @@ textarea:focus {
 /* font */
 @font-face {
     font-family: 'Comfortaa';
-    src: url('Comfortaa/static/Comfortaa-Regular.ttf') format('truetype');
+    src: url('/Comfortaa/static/Comfortaa-Regular.ttf') format('truetype');
 }
 
 body {
@@ -126,3 +126,15 @@ body {
 .prompt-copy {
     width: 300px;
 }
+
+/* img in first page */
+small {
+	font-size: 0.6em;
+}
+.bottom-right {
+
+   position: fixed;
+      bottom: 0;
+      right: 0;
+      padding: 10px;
+      }

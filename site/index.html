@@ -1,46 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-<!--
-  This HTML page is the index of 'babbling.computer', it has a 
-  gradient background that uses all the colors in diffllm.css 
--->    
+  <head>
 
-<head>
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114"
+      href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120"
+      href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144"
+      href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152"
+      href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180"
+      href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"
+      href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32"
+      href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96"
+      href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16"
+      href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
     <title>babbling.computer</title>
     <style>
-        body {
-            background: linear-gradient(to bottom right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff);
-            color: #fff;
-            font-family: sans-serif;
-            font-size: 2em;
-            font-weight: bold;
-            text-align: center;
-            text-shadow: 0 0 10px #000;
-        }
+    .responsive-div {
+      font-size: 16px;
+    }
 
-        a {
-            color: #fff;
-            text-decoration: none;
-        }
+    @media (max-width: 768px) {
+      body {
+        font-size: 14px;
+      }
+    }
 
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
+    @media (max-width: 480px) {
+      body {
+        font-size: 8px;
+      }
+    }
 
-<body>
-    <h1>babbling.computer</h1>
-    <hr>
-    <h2>
-	<a href="/chatGPT-collector.user.js">chatGPT-collector.user.js</a>
-        <br />
-        <a href="/prompt">prompt</a> multiplier
-	<br />
-        <a href="/diff">diff</a> service
-	<br />
-        <a target="_blank" href="https://github.com/vecna/babbling">scripts</a> (github)
-    </h2>
-</body>
+    .header {
+      background: linear-gradient(to bottom right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff);
+      color: #fff;
+      font-family: sans-serif;
+      font-size: 2em;
+      font-weight: bold;
+      text-align: center;
+      text-shadow: 0 0 10px #000;
+      border-radius: 30px;
+    }
+
+    .crazy {
+      margin: 1em;
+      padding: 1em;
+      border: 1em;
+    }
+
+    /* font */
+    @font-face {
+      font-family: 'Comfortaa';
+      src: url('Comfortaa/static/Comfortaa-Regular.ttf') format('truetype');
+    }
+
+    body {
+      font-family: 'Comfortaa', sans-serif;
+    }
+
+    .text {
+      font-size: 2em;
+    }
+
+    ul {
+      list-style-image: url(/tongue.png);
+    }
+
+    li {
+      border-top: 1px solid #000;
+      padding-bottom: 1em;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+  </head>
+
+  <body>
+    <div class="header">
+
+      <h1>babbling.computer</h1>
+      <small>Caution: These scripts are <b>experimental</b> and should not
+        be used without supervision!</small>
+    </div>
+
+    <br>
+
+    <div class="crazy text">
+      <ul>
+        <li>
+          <a href="/chatGPT-collector.user.js">chatGPT-collector.user.js</a>
+        </li>
+        <li>
+          <a href="/Bing-collector.user.js">Bing-collector.user.js</a>
+        </li>
+        <li>
+          <a href="/prompt">prompt</a> multiplier
+        </li>
+        <li>
+          <a href="/diff">diff</a> service
+        </li>
+        <li>
+          <a target="_blank" href="https://github.com/vecna/babbling">scripts</a>
+          (github)
+        </li>
+      </ul>
+    </div>
+  </body>
 
 </html>

@@ -1,6 +1,6 @@
 
 function initPromptGenerator() {
-
+    console.log(`Noting to initialize yet`);
 }
 
 async function calculateHash(input) {
@@ -40,7 +40,7 @@ async function generatePrompt() {
 
     const subject = document.getElementById("subject").value;
     if (!subject || subject.length == 0) {
-        document.getElementById("prompt-list").parentNode.innerHTML = `<img src="/subject-missing.jpeg" />`;
+        document.getElementById("prompt-list").parentNode.innerHTML = `<img src="/prompt/subject-missing.jpeg" />`;
         return;
     }
 

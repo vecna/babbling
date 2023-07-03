@@ -97,7 +97,8 @@ async function createPad(url, material) {
           retval.type = 'babbling-prompt';
           retval.text = chunks[1];
         } else {
-          retval.type = 'free-format-prompt';
+	// it should be 'free-form-prompt' but to keep legacy now is this:
+          retval.type = 'prompt';
           retval.text = e.textContent;
         }
         return retval;
