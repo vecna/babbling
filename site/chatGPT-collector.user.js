@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ChatGPT I/O collector
 // @namespace    https://babbling.computer
-// @version      0.1.10
+// @version      0.1.13
 // @description  try to make chatbot a bit more understandable
 // @author       vecna
 // @match        https://chat.openai.com/*
@@ -9,57 +9,19 @@
 // @grant        GM_setClipboard
 // @require      https://code.jquery.com/jquery.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.2/turndown.min.js
+// @require      https://TODO
 // ==/UserScript==
 
-function getRandomColor() {
-  // produce three random number between 0 and 255 which are the color red, green, blue
-  const red = Math.floor(Math.random() * 256);
-  const green = Math.floor(Math.random() * 256);
-  const blue = Math.floor(Math.random() * 256);
-
-  // Make a string in the right format "rgb(red, green, blue)"
-  const color = "rgb(" + red + ", " + green + ", " + blue + ")";
-  return color;
-}
-
-const etherpad = {
-  server: "https://babbling.computer",
-  necessaryThing: "f6fcc5d8877d2f9b8234d3de8d1443f9c3a8eb390939e1a557112add363caddb"
-};
-
-async function createPad(url, material) {
-  // Material is a collecton that should be trasformed in the way
-  // that's looks fine for the pad consumer.
-  try {
-    const createResponse = await fetch(url, {
-      method: 'POST',
-      body: `text=${encodeURIComponent(JSON.stringify(material, null, 2))}`,
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    });
-    const results = await createResponse.json();
-    $("#export--button").css("background-color", getRandomColor());
-    return results;
-  } catch (error) {
-    console.log(error.message);
-    return { code: 500, message: error.message };
-  }
-}
 
 (async function () {
 
   // button "export" injected in the DOM
-  const exportButton = document.createElement('button');
-  exportButton.id = "export--button";
-  exportButton.textContent = '🗣🖥 export';
-  exportButton.style.position = "fixed";
-  exportButton.style.backgroundColor = "#ffffff";
-  exportButton.style.border = "1px solid #202123";
-  exportButton.style.left = "220px";
-  exportButton.style.top = "55px";
-  exportButton.style.borderRadius = "5px";
-  exportButton.style.padding = "10px";
-
+  const exportButton = createButton();
   document.body.appendChild(exportButton);
+
+  // and the input string to mark the chat
+  const inputBlock = createInputBlock();
+  document.body.appendChild(inputBlock);
 
   const chatList = $('[data-projection-id="1"]');
   console.log(chatList.text());
@@ -72,10 +34,14 @@ async function createPad(url, material) {
     // <div class=​"min-h-[20px]​ flex flex-col items-start gap-4 whitespace-pre-wrap break-words">​…​</div>​flex
     // main difference among these elements is the number of HTML child
 
+    const label = document.querySelector('#export--input').value;
+    console.log(`Label is ${label}`);
+
     const material = _.map(chat, function (e, chatIndex) {
       const turndownService = new TurndownService();
       const retval = {
-        type: 'prompt'
+        type: 'prompt',
+        label,
       };
       if (e.querySelector('.prose') === null) {
         console.log(`Element ${chatIndex} is a prompt`);

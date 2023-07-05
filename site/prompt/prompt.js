@@ -46,6 +46,13 @@ async function generatePrompt() {
 
     console.log(infopoints);
 
+    /* there are also two possible dynamic prompts */
+    const dn1 = document.getElementById("name-dyn-1");
+    const dv1 = document.getElementById("value-dyn-1");
+
+    const dn2 = document.getElementById("name-dyn-2");
+    const dv2 = document.getElementById("value-dyn-2");
+
     /* infopoints is a mixed list. the elements might be string or lists of strings,
        In the next function we need to multiply the prompts potentially produced */
     let prompts = [{

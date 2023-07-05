@@ -43,6 +43,8 @@ section {
 .grid-item {
     display: flex;
     flex-direction: column;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 label {
@@ -92,7 +94,7 @@ body {
 
 .description {
     line-height: 0;
-    font-size: 0.8em;
+    font-size: 0.5em;
 }
 
 .colorful-button {
@@ -123,18 +125,20 @@ body {
 .button-list {
     float: left;
 }
+
 .prompt-copy {
     width: 300px;
 }
 
 /* img in first page */
 small {
-	font-size: 0.6em;
+    font-size: 0.6em;
 }
+
 .bottom-right {
 
-   position: fixed;
-      bottom: 0;
-      right: 0;
-      padding: 10px;
-      }
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 10px;
+}
