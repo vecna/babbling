@@ -34,54 +34,46 @@ async function createPad(url, material) {
 }
 
 function createButton() {
+  if (document.querySelector('#export--button')) {
+    console.log('export--button already exists');
+    return null;
+  }
+
   const btn = document.createElement('button');
   btn.id = "export--button";
   btn.textContent = '🗣🖥 export';
-  btn.style.position = "fixed";
-  btn.style.backgroundColor = "#ffffff";
-  btn.style.border = "1px solid #202123";
-  btn.style.left = "240px";
-  btn.style.top = "55px";
-  btn.style.borderRadius = "5px";
-  btn.style.padding = "10px";
+  btn.style = style;
   return btn;
 }
 
-function createPromptLabelEntry() {
+function createPromptLabelEntry(style) {
+  if (document.querySelector('#prompt--id')) {
+    console.log('prompt--id already exists');
+    return null;
+  }
   /* the input block is an <input type=text> larger twice 
   the size of the button, right below the button, and 
   it has an ID that allow us later to pick the value */
   const inputBlock = document.createElement('input');
-  inputBlock.id = "export--input";
-  inputBlock.style.position = "fixed";
-  inputBlock.style.backgroundColor = 'rgba(250, 200, 250, 0.5)';
-  inputBlock.style.borderBottom = "2px solid #202123";
-  inputBlock.style.left = "240px";
-  inputBlock.style.top = "110px";
-  inputBlock.style.borderRadius = "5px";
-  inputBlock.style.padding = "10px";
-  inputBlock.style.width = "400px";
-  inputBlock.style.height = "30px";
-  inputBlock.style.opacity = 0.5;
+  inputBlock.id = "prompt--id";
+  inputBlock.placeholder = "    Prompt identifier";
+  inputBlock.style = style;
+ 
   return inputBlock;
 }
 
-function createHumanLabelEntry() {
+function createHumanLabelEntry(style) {
+  if (document.querySelector('#researcher--id')) {
+    console.log('researcher--id already exists');
+    return null;
+  }
   /* the input block is an <input type=text> larger twice 
   the size of the button, right below the button, and 
   it has an ID that allow us later to pick the value */
   const inputBlock = document.createElement('input');
   inputBlock.id = "researcher--id";
-  inputBlock.placeholder = "Researcher identifier";
-  inputBlock.style.position = "fixed";
-  inputBlock.style.backgroundColor = 'rgba(200, 250, 250, 0.5)';
-  inputBlock.style.borderBottom = "2px solid #202123";
-  inputBlock.style.left = "240px";
-  inputBlock.style.top = "165px";
-  inputBlock.style.borderRadius = "5px";
-  inputBlock.style.padding = "10px";
-  inputBlock.style.width = "400px";
-  inputBlock.style.height = "30px";
-  inputBlock.style.opacity = 0.5;
+  inputBlock.placeholder = "    Researcher identifier";
+  inputBlock.style = style;
+
   return inputBlock;
 }
