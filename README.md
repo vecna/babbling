@@ -8,7 +8,7 @@ The scripts normally works in conjunction with the servers (nocodb, etherpad, an
 
 **Metamorphic testing**, confortably described in this nice blogpost: https://www.giskard.ai/knowledge/how-to-test-ml-models-4-metamorphic-testing is the first attempt I made.
 
-**<quoting>**:
+`<quoting>`
 
 ![](https://uploads-ssl.webflow.com/601d6f7e527cf16fd11a1aae/62d8824c19313d6e4bbc7b6a_Metamorphic%20testing.jpg)
 
@@ -22,7 +22,7 @@ _Here are the most used metamorphic relations in the scientific literature:_
 
 _In this case was also a necessary step to understand how to _distill_ information our of a large text corpus, because I don't want to read everything, because the `Distillation`/`Translation` tools have been developed to ingest the result of the `Production` tools_
 
-**</quoting>**
+`</quoting>`
 
 
 ### Use these scripts

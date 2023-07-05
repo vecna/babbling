@@ -1,17 +1,17 @@
 // ==UserScript==
 // @name         ChatGPT I/O collector
 // @namespace    https://babbling.computer
-// @version      0.1.13
-// @description  try to make chatbot a bit more understandable
+// @version      0.1.17
+// @description  A small tool to weight actual impact of prompt engineering on chatbot
 // @author       vecna
 // @match        https://chat.openai.com/*
-// @icon         https://img.icons8.com/nolan/2x/chatgpt.png
+// @icon         https://raw.githubusercontent.com/vecna/babbling/main/site/babbling-icon.png
 // @grant        GM_setClipboard
 // @require      https://code.jquery.com/jquery.min.js
+// @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.2/turndown.min.js
-// @require      https://TODO
+// @require      https://raw.githubusercontent.com/vecna/babbling/main/site/lib/tampermonkey-utils.js
 // ==/UserScript==
-
 
 (async function () {
 
@@ -34,14 +34,39 @@
     // <div class=​"min-h-[20px]​ flex flex-col items-start gap-4 whitespace-pre-wrap break-words">​…​</div>​flex
     // main difference among these elements is the number of HTML child
 
-    const label = document.querySelector('#export--input').value;
-    console.log(`Label is ${label}`);
+    const researcherId = document.querySelector('#researcher--id')?.value || 'no-researcher-id';
+    const promptId = document.querySelector('#prompt--id')?.value || 'no-prompt-id';
+
+    console.log(`promptId is ${promptId} and researcherId is ${researcherId}`);
+
+    // detect if we are in the correct URL format and detect the kind of service we're using
+    if (window.location?.search[0] == '?') {
+      alert(`Wrong URL! please select the chat from the LEFT COLUMN`);
+      return;
+    }
+
+    // spot the kind of service 
+    const x = document.querySelectorAll(".justify-center.bg-gray-50")
+    // there can be or `null` or a list with one element. When is `null` we're in the
+    // UNPAID service of openAI, when there is one element we're in the PAID service
+    // and in this second case we need to take the .textContent of the element because 
+    // would be sent. 
+    // The variables valorized and send are: 1) the kind of service and 2) the text
+
+    const service = x?.length > 0 ? 'paid ': 'free';
+    const gptVersion = x?.length > 0 ? x[0].textContent : 'free-3.5';
 
     const material = _.map(chat, function (e, chatIndex) {
       const turndownService = new TurndownService();
       const retval = {
         type: 'prompt',
-        label,
+        service: 'chatGPT',
+        promptId,
+        researcherId,
+        service,
+        gptVersion,
+        when: new Date().toISOString(),
+        interactionCounter: chatIndex + 1,
       };
       if (e.querySelector('.prose') === null) {
         console.log(`Element ${chatIndex} is a prompt`);
@@ -54,7 +79,7 @@
           // it is a babbling prompt
           const chunks = e.textContent.split("\n            \n");
           retval.parameters = _.reduce(
-            chunks[0].trim().split("\n"), function(memo, e) {
+            chunks[0].trim().split("\n"), function (memo, e) {
               const blob = e.split(':');
               _.set(memo, blob[0].trim(), blob[1].trim());
               return memo
@@ -63,7 +88,7 @@
           retval.type = 'babbling-prompt';
           retval.text = chunks[1];
         } else {
-	// it should be 'free-form-prompt' but to keep legacy now is this:
+          // it should be 'free-form-prompt' but to keep legacy now is this:
           retval.type = 'prompt';
           retval.text = e.textContent;
         }
