@@ -33,7 +33,7 @@ async function createPad(url, material) {
   }
 }
 
-function createButton() {
+function createButton(style) {
   if (document.querySelector('#export--button')) {
     console.log('export--button already exists');
     return null;

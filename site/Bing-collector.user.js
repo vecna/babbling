@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bing I/O collector
 // @namespace    https://babbling.computer
-// @version      0.1.24
+// @version      0.1.30
 // @description  A small tool to weight actual impact of prompt engineering on chatbot
 // @author       vecna
 // @match        https://www.bing.com/*
@@ -25,7 +25,7 @@
   babblingText.style.cursor = 'copy';
   babblingText.addEventListener('mouseover', async function () {
     console.log('mouseover');
-    await inejctButtons();
+    await injectBabblingElements();
   });
 
   const logo = document.querySelector('h1.b_logo');
@@ -33,7 +33,7 @@
     logo.appendChild(babblingText);
 
   if(checkChatPresence()) {
-    await inejctButtons();
+    await injectBabblingElements();
   }
 })();
 
@@ -42,36 +42,54 @@ function checkChatPresence() {
   return (cib?.getAttribute('mode') === 'conversation')
 }
 
-async function inejctButtons() {
+async function injectBabblingElements() {
   // all the three elements should be injected in the tab list
   // button "export" injected in the DOM
 
   const target = document.querySelector("#b_header");
-  target.outerHTML = "";
-  const exportButton = createButton({});
-  if(exportButton) {
-    const newListItem = document.createElement("li");
-    newListItem.appendChild(exportButton);
+  target.innerHTML = "<p>Babbling Experiment!</p>";
+  target.style.textAlign = "center";
+
+  const exportButton = createButton({
+    backgroundColor: "#ffffff",
+    border: "1px solid #202123",
+    borderRadius: "5px",
+    padding: "10px",
+  });
+
+  if(exportButton)
     target
       .appendChild(newListItem);
-  }
 
-  return;
   // the input string to identify the prompt
-  const promptInputBlock = createPromptLabelEntry({});
+  const promptInputBlock = createPromptLabelEntry({
+    backgroundColor: 'rgba(250, 200, 250, 0.5)',
+    borderBottom: "2px solid #202123",
+    borderRadius: "5px",
+    padding: "10px",
+    width: "400px",
+    height: "30px",
+    opacity: 0.5,
+  });
+
   if(promptInputBlock)
-    document
-      .querySelector(".cib-serp-main")
+    target
       .appendChild(promptInputBlock);
 
   // the input string to identify the researcher
-  const researcherInputBlock = createHumanLabelEntry({});
-  if(researcherInputBlock)
-    document
-      .querySelector(".cib-serp-main")
-      .appendChild(researcherInputBlock);
+  const researcherInputBlock = createHumanLabelEntry({
+    backgroundColor: 'rgba(200, 250, 250, 0.5)',
+    borderBottom: "2px solid #202123",
+    borderRadius: "5px",
+    padding: "10px",
+    width: "400px",
+    height: "30px",
+    opacity: 0.5,
+  });
 
-  return;
+  if(researcherInputBlock)
+    target
+      .appendChild(researcherInputBlock);
 
   const chatList = $('[data-projection-id="1"]');
   console.log(chatList.text());
