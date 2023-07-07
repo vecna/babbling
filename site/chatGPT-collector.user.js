@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ChatGPT I/O collector
 // @namespace    https://babbling.computer
-// @version      0.1.19
+// @version      0.1.20
 // @description  A small tool to weight actual impact of prompt engineering on chatbot
 // @author       vecna
 // @match        https://chat.openai.com/*
@@ -55,9 +55,6 @@
     opacity: 0.5,
   });
   document.body.appendChild(researcherInputBlock);
-
-  const chatList = $('[data-projection-id="1"]');
-  console.log(chatList.text());
 
   // Event handler for the click
   exportButton.addEventListener('click', async function () {

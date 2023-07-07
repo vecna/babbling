@@ -33,7 +33,7 @@ async function createPad(url, material) {
   }
 }
 
-function createButton(style) {
+function createButton(styles) {
   if (document.querySelector('#export--button')) {
     console.log('export--button already exists');
     return null;
@@ -42,11 +42,11 @@ function createButton(style) {
   const btn = document.createElement('button');
   btn.id = "export--button";
   btn.textContent = '🗣🖥 export';
-  btn.style = style;
+  btn.style = Object.assign(btn.style, styles);
   return btn;
 }
 
-function createPromptLabelEntry(style) {
+function createPromptLabelEntry(styles) {
   if (document.querySelector('#prompt--id')) {
     console.log('prompt--id already exists');
     return null;
@@ -57,12 +57,12 @@ function createPromptLabelEntry(style) {
   const inputBlock = document.createElement('input');
   inputBlock.id = "prompt--id";
   inputBlock.placeholder = "    Prompt identifier";
-  inputBlock.style = style;
+  inputBlock.style = Object.assign(inputBlock.style, styles);
  
   return inputBlock;
 }
 
-function createHumanLabelEntry(style) {
+function createHumanLabelEntry(styles) {
   if (document.querySelector('#researcher--id')) {
     console.log('researcher--id already exists');
     return null;
@@ -73,7 +73,7 @@ function createHumanLabelEntry(style) {
   const inputBlock = document.createElement('input');
   inputBlock.id = "researcher--id";
   inputBlock.placeholder = "    Researcher identifier";
-  inputBlock.style = style;
+  inputBlock.style = Object.assign(inputBlock.style, styles);
 
   return inputBlock;
 }
