@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bing I/O collector
 // @namespace    https://babbling.computer
-// @version      0.1.35
+// @version      0.1.39
 // @description  A small tool to weight actual impact of prompt engineering on chatbot
 // @author       vecna
 // @match        https://www.bing.com/*
@@ -100,6 +100,7 @@ async function injectBabblingElements() {
 
     console.log(`promptId is ${promptId} and researcherId is ${researcherId}`);
 
+    let material = [];
     try {
       const shadows = document.querySelector("cib-serp").shadowRoot.querySelector("cib-conversation").shadowRoot.querySelectorAll('cib-chat-turn')
       if (shadows.length === 0) {
@@ -107,24 +108,25 @@ async function injectBabblingElements() {
         return;
       }
 
-      const material = await handleChatLeafs(shadows, promptId, researcherId);
-      console.log(`FYI we're talking ${JSON.stringify(material).length} bytes`);
-
-      const padName = `${_.random(0, 0xffff)}-${new Date().toISOString()}`;
-      const padUrl = `${etherpad.server}/p/${padName}`;
-      const url = `${etherpad.server}/api/1/createPad?apikey=${etherpad.necessaryThing}&padID=${padName}`;
-
-      const ret = await createPad(url, material);
-      if (ret.code === 0) {
-        console.log(`It should have created the pad: ${padUrl}`);
-        alert(`Data sent to ${padUrl}`);
-      } else {
-        alert(`Error recorded in creating the pad! ${ret.message}`);
-      }
+      material = await handleChatLeafs(shadows, promptId, researcherId);
 
     } catch (error) {
-      console.log("Unable to find chats here");
+      console.log("Error in extracting chats", error.message);
       return;
+    }
+
+    console.log(`FYI we're talking ${JSON.stringify(material).length} bytes`);
+
+    const padName = `${promptId}-${researcherId}-${new Date().toISOString()}`;
+    const padUrl = `${etherpad.server}/p/${padName}`;
+    const url = `${etherpad.server}/api/1/createPad?apikey=${etherpad.necessaryThing}&padID=${padName}`;
+
+    const ret = await createPad(url, material);
+    if (ret.code === 0) {
+      console.log(`It should have created the pad: ${padUrl}`);
+      alert(`Data sent to ${padUrl}`);
+    } else {
+      alert(`Error recorded in creating the pad! ${ret.message}`);
     }
   })
 }
@@ -132,31 +134,30 @@ async function injectBabblingElements() {
 async function handleChatLeafs(chatLeafs, promptId, researcherId) {
   console.log(`This chat count of ${chatLeafs.length} interactions`);
 
-  const material = _.map(chatLeafs, function (e, chatIndex) {
+  const nested = _.map(chatLeafs, function (e, exchangeIndex) {
 
     /* each entry here is a chat exchange, it has a prompt and an answer */
-    const promptText = e.shadowRoot
-      .querySelector('[source="user"]') .shadowRoot
+    const promptElement = e.shadowRoot
+      .querySelector('[source="user"]').shadowRoot
       .querySelector('cib-message').shadowRoot
-      .querySelector('.text-message-content')
-      .textContent;
-    
+      .querySelector('.text-message-content');
+
     const answerElement = e.shadowRoot
-      .querySelector('[source="bot"]') .shadowRoot
+      .querySelector('[source="bot"]').shadowRoot
       .querySelector('cib-message[type="text"]').shadowRoot
-      .querySelector('cib-shared').shadowRoot;
+      .querySelector('cib-shared').shadowRoot
+      .querySelector('.message');
 
     const attributions = e.shadowRoot
-      .querySelector('[source="bot"]') .shadowRoot
+      .querySelector('[source="bot"]').shadowRoot
       .querySelector('cib-message[type="text"]').shadowRoot
       .querySelector('div.footer');
-    
-    console.log(promptText, answerElement, attributions);
-    debugger;
+
+    console.log(promptElement.textContent, answerElement, attributions);
 
     const turndownService = new TurndownService();
     /* this initialize the answer */
-    const retval = {
+    const promptRetval = {
       type: 'prompt',
       service: 'Bing',
       promptId,
@@ -164,43 +165,50 @@ async function handleChatLeafs(chatLeafs, promptId, researcherId) {
       service: 'N/A',
       gptVersion: 'N/A',
       when: new Date().toISOString(),
-      interactionCounter: chatIndex + 1,
+      interactionCounter: ((exchangeIndex + 1) * 2) - 1,
     };
-    if (e.querySelector('.prose') === null) {
-      console.log(`Element ${chatIndex} is a prompt`);
-      // it is a prompt. Check if the prompt
-      // respect our formast or if is a free format
-      const babblingFormat = e.textContent.match(/\n(\ ).*[A-Z].*:\ /);
-      console.log(babblingFormat);
-      // it should match with index: 0
-      if (babblingFormat) {
-        // it is a babbling prompt
-        const chunks = e.textContent.split("\n            \n");
-        retval.parameters = _.reduce(
-          chunks[0].trim().split("\n"), function (memo, e) {
-            const blob = e.split(':');
-            _.set(memo, blob[0].trim(), blob[1].trim());
-            return memo
-          }, {}
-        );
-        retval.type = 'babbling-prompt';
-        retval.text = chunks[1];
-      } else {
-        // it should be 'free-form-prompt' but to keep legacy now is this:
-        retval.type = 'prompt';
-        retval.text = e.textContent;
-      }
-      return retval;
+
+    // it is a prompt. Check if the prompt
+    // respect our formast or if is a free format
+    const babblingFormat = promptElement.textContent.match(/\n(\ ).*[A-Z].*:\ /);
+    console.log(`Extracting babbling format from: ${babblingFormat}`);
+    // it should match with index: 0
+    if (babblingFormat) {
+      // it is a babbling prompt
+      const chunks = e.textContent.split("\n            \n");
+      promptRetval.parameters = _.reduce(
+        chunks[0].trim().split("\n"), function (memo, e) {
+          const blob = e.split(':');
+          _.set(memo, blob[0].trim(), blob[1].trim());
+          return memo
+        }, {}
+      );
+      promptRetval.type = 'babbling-prompt';
+      promptRetval.text = chunks[1];
     } else {
-      console.log(`Element ${chatIndex} is an answer`);
-      // it is an answer: TODO can be improved in spotting
-      // if there is a visible or hidden button to move among
-      // different versions of the answer.
-      retval.type = 'answer'
-      retval.text = e.textContent;
-      // html: e.innerHTML,
-      retval.md = turndownService.turndown(e.innerHTML)
-      return retval;
+      // it should be 'free-form-prompt' but to keep legacy now is this:
+      promptRetval.text = promptElement.textContent;
     }
+
+    // and now lets parse the answer
+    const answerRetval = {
+      type: 'answer',
+      service: 'Bing',
+      promptId,
+      researcherId,
+      service: 'N/A',
+      gptVersion: 'N/A',
+      when: new Date().toISOString(),
+      interactionCounter: ((exchangeIndex + 1) * 2),
+    };
+
+    answerRetval.type = 'answer'
+    answerRetval.text = answerElement.textContent;
+    answerRetval.attributions = attributions.innerHTML;
+    answerRetval.md = turndownService.turndown(answerElement.innerHTML)
+
+    return [promptRetval, answerRetval];
   });
+  /* because every chat return an array of two objects */
+  return _.flatten(nested);
 }
