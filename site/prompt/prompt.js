@@ -14,6 +14,17 @@ async function calculateHash(input) {
     return hashHex.substring(0, 20);
 }
 
+function acquirePrompt(value) {
+
+    const lowered = value.toLowerCase();
+
+    if (lowered.match(/\n/))
+        return lowered.split("\n");
+    else
+        return lowered;
+
+}
+
 async function generatePrompt() {
     const mapinfo = {
         textarea1: "Tone",
@@ -27,14 +38,8 @@ async function generatePrompt() {
         const x = document.getElementById(textareaN);
         if (!(x.value && x.value.length > 0))
             return memo;
-        
-        const lowered = x.value.toLowerCase();
 
-        if (lowered.match(/\n/))
-            memo[promptDet] = lowered.split("\n");
-        else
-            memo[promptDet] = lowered;
-
+        memo[promptDet] = acquirePrompt(x.value.toLowerCase());
         return memo;
     }, {});
 
@@ -47,11 +52,23 @@ async function generatePrompt() {
     console.log(infopoints);
 
     /* there are also two possible dynamic prompts */
-    const dn1 = document.getElementById("name-dyn-1");
-    const dv1 = document.getElementById("value-dyn-1");
+    const dn1 = document.getElementById("name-dyn-1").value;
+    const dv1 = document.getElementById("value-dyn-1").value;
 
-    const dn2 = document.getElementById("name-dyn-2");
-    const dv2 = document.getElementById("value-dyn-2");
+    if (dn1.length && dv1.length) {
+        /* we need to update the list of parameters and expand infopoints */
+        mapinfo[`${_.random(0, 0xfffff)}`] = dn1;
+        infopoints[dn1] = acquirePrompt(dv1.toLowerCase());
+    }
+
+    const dn2 = document.getElementById("name-dyn-2").value;
+    const dv2 = document.getElementById("value-dyn-2").value;
+
+    if (dn2.length && dv2.length) {
+        /* we need to update the list of parameters and expand infopoints */
+        mapinfo[`${_.random(0, 0xfffff)}`] = dn2;
+        infopoints[dn2] = acquirePrompt(dv2.toLowerCase());
+    }
 
     /* infopoints is a mixed list. the elements might be string or lists of strings,
        In the next function we need to multiply the prompts potentially produced */
@@ -85,7 +102,16 @@ async function generatePrompt() {
         prompt.hash = await calculateHash(JSON.stringify(prompt));
     }
 
-    console.log(prompts);
+    const parametersHash = await calculateHash(JSON.stringify(prompts));
+    /* parametersHash need to be converted into 3 random words taken from the 
+       list 'foodwords' and separated by a '-' */
+    const first = parametersHash.replace(/[a-f]/g, '1');
+    const second = parametersHash.replace(/[a-f]/g, '2');
+    const third = parametersHash.replace(/[a-f]/g, '3');
+    const wordsHash = `${foodwords[_.parseInt(first) % foodwords.length]}-${foodwords[_.parseInt(second) % foodwords.length]}-${foodwords[_.parseInt(third) % foodwords.length]}`;
+    document.getElementById("prompt--id").innerHTML =
+        `<p>Prompt identifier: <code>${wordsHash}</code></p>`;
+
     const html = produceHTML(prompts);
     document.getElementById("prompt-list").innerHTML = html;
 }
@@ -96,12 +122,15 @@ function produceHTML(prompts) {
        it would be rendered in a small text as a preview */
 
     const html = _.reduce(prompts, (memo, prompt) => {
+
+        let parameters = "";
+        _.each(_.keys(_.omit(prompt, ['hash', 'subject'])), (key) => {
+            parameters += `${key.toUpperCase()}: ${prompt[key]}<br>\n`;
+        })
+
         const promptHTML = `<div class="grid-item">
           <div class="prompt" id="prompt--${prompt.hash}">
-            ${prompt.Tone ? `TONE: ${prompt.Tone}<br>` : "" }
-            ${prompt.Format ? `FORMAT: ${prompt.Format}<br>` : "" }
-            ${prompt["Act as"] ? `ACT AS: ${prompt["Act as"]}<br>` : "" }
-            ${prompt.Objective ? `OBJECTIVE: ${prompt.Objective}<br>` : ""}
+            ${parameters}  
             <br/>
             ${prompt.subject}
           </div>
@@ -111,14 +140,14 @@ function produceHTML(prompts) {
           </div>
         </div>`;
         return memo + promptHTML;
-    }
-    , "");
+    }, "");
     return html;
 }
 
 function copyToClipboard(hash) {
-  /* pick the text into the element with id prompt--${hash}, and copy to the clipboard */
-    const text = document.getElementById(`prompt--${hash}`).textContent;
-    navigator.clipboard.writeText(text);
+    /* pick the text into the element with id prompt--${hash}, and copy to the clipboard */
+    const e = document.getElementById(`prompt--${hash}`);
+    e.style.backgroundColor = 'yellow';
+    navigator.clipboard.writeText(e.textContent);
     $(`#copy--${hash}`).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
 }

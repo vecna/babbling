@@ -7,112 +7,107 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-    <meta charset="UTF-8">
-    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114"
-      href="/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120"
-      href="/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144"
-      href="/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152"
-      href="/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180"
-      href="/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"
-      href="/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32"
-      href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96"
-      href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16"
-      href="/favicon-16x16.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
 
-    <title>Babbling Prompt</title>
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
-      integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
-      crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="prompt.css">
-    <script src="prompt.js"></script>
-  </head>
+  <title>Babbling Prompt</title>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+    integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="prompt.css">
+  <script src="/foodwords.js"></script>
+  <script src="prompt.js"></script>
+</head>
 
-  <body>
-    <section>
-      <h1>Prompt generation experiment</h1>
-      <small class="bottom-right">
-        <a href="ultimate.jpeg" target=_blank>image</a>, 
-        <a href="/">home</a>.
-      </small>
-    </section>
-    <section class="from--top">
-      <div class="container">
-        <div class="content">
-          <img src="ultimate.jpeg" alt="Ultimate">
-        </div>
+<body>
+  <section>
+    <h1>Prompt generation experiment</h1>
+    <small class="bottom-right">
+      <a href="ultimate.jpeg" target=_blank>image</a>,
+      <a href="/">home</a>.
+    </small>
+  </section>
+  <section class="from--top">
+    <div class="container">
+      <div class="content">
+        <img src="ultimate.jpeg" alt="Ultimate">
       </div>
-    </section>
-    <section>
-      <div class="grid-container">
-        <div class="grid-item" style="background-color: antiquewhite;">
-          <label for="input1">Tone</label>
-          <textarea id="textarea1" rows="1" cols="40"></textarea>
-          <p class="description">(formal, casual, informative, ...)</p>
-        </div>
-        <div class="grid-item" style="background-color: beige;">
-          <label for="input2">Format</label>
-          <textarea id="textarea2" rows="1" cols="40"></textarea>
-          <p class="description">(essay, bullet points...)</p>
-        </div>
-        <div class="grid-item" style="background-color: rgb(255, 226, 246);">
-          <label for="input3">Act as</label>
-          <textarea id="textarea3" rows="1" cols="40"></textarea>
-          <p class="description">(expert, critic...)</p>
-        </div>
-        <div class="grid-item" style="background-color: rgb(223, 255, 244);">
-          <label for="input4">Objective</label>
-          <textarea id="textarea4" rows="1" cols="40"></textarea>
-          <p class="description">(inform, persuade, entertain...)</p>
-        </div>
-
-        <div class="grid-item" style="background-color: rgb(223, 255, 210);">
-          <textarea id="name-dyn-1" placeholder="dynamic prompt (1)" rows="1" cols="40"></textarea>
-          <textarea id="value-dyn-1" rows="1" cols="40"></textarea>
-        </div>
-
-        <div class="grid-item" style="background-color: blanchedalmond;">
-          <textarea id="name-dyn-2" placeholder="dynamic prompt (2)" rows="1" cols="40"></textarea>
-          <textarea id="value-dyn-2" rows="1" cols="40"></textarea>
-        </div>
-
+    </div>
+  </section>
+  <section>
+    <div class="grid-container">
+      <div class="grid-item" style="background-color: antiquewhite;">
+        <label for="input1">Tone</label>
+        <textarea id="textarea1" rows="1" cols="40"></textarea>
+        <p class="description">(formal, casual, informative, ...)</p>
+      </div>
+      <div class="grid-item" style="background-color: beige;">
+        <label for="input2">Format</label>
+        <textarea id="textarea2" rows="1" cols="40"></textarea>
+        <p class="description">(essay, bullet points...)</p>
+      </div>
+      <div class="grid-item" style="background-color: rgb(255, 226, 246);">
+        <label for="input3">Act as</label>
+        <textarea id="textarea3" rows="1" cols="40"></textarea>
+        <p class="description">(expert, critic...)</p>
+      </div>
+      <div class="grid-item" style="background-color: rgb(223, 255, 244);">
+        <label for="input4">Objective</label>
+        <textarea id="textarea4" rows="1" cols="40"></textarea>
+        <p class="description">(inform, persuade, entertain...)</p>
       </div>
 
-      <div class="subject-container">
-        <label for="subject">Subject</label>
-        <br>
-        <textarea class="larger" id="subject" rows="1" cols="70"></textarea>
+      <div class="grid-item" style="background-color: rgb(223, 255, 210);">
+        <textarea id="name-dyn-1" placeholder="dynamic prompt (1)" rows="1" cols="40"></textarea>
+        <textarea id="value-dyn-1" rows="1" cols="40"></textarea>
       </div>
-    </section>
 
-    <section>
-      <button id="generate" class="colorful-button"
-        onclick="generatePrompt()">Generate</button>
-      <div id="prompt-list" class="grid-container">
+      <div class="grid-item" style="background-color: blanchedalmond;">
+        <textarea id="name-dyn-2" placeholder="dynamic prompt (2)" rows="1" cols="40"></textarea>
+        <textarea id="value-dyn-2" rows="1" cols="40"></textarea>
       </div>
-    </section>
 
-  </body>
+    </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", initPromptGenerator);
-  </script>
+    <div class="subject-container">
+      <label for="subject">Subject</label>
+      <br>
+      <textarea class="larger" id="subject" rows="1" cols="70"></textarea>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div id="prompt--id"></div>
+      <div class="button">
+        <button id="generate" class="colorful-button" onclick="generatePrompt()">Generate</button>
+      </div>
+    </div>
+    <div id="prompt-list" class="grid-container">
+    </div>
+  </section>
+
+</body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", initPromptGenerator);
+</script>
 
 </html>

@@ -136,9 +136,12 @@ small {
 }
 
 .bottom-right {
-
     position: fixed;
     bottom: 0;
     right: 0;
     padding: 10px;
+}
+
+#prompt--id {
+    font-size: 0.7em;
 }
