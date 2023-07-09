@@ -9,53 +9,53 @@
 // @require      https://code.jquery.com/jquery.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.2/turndown.min.js
-// @require      https://babbling.computer/lib/tampermonkey-utils.js
+// @require      http://localhost:8000/lib/tampermonkey-utils.js
 // ==/UserScript==
+
+// @require      https://babbling.computer/lib/tampermonkey-utils.js
 
 (async function () {
 
   console.log("Injecting buttons and input fields");
 
   // button "export" injected in the DOM
-  const exportButton = createButton({
-    position: "fixed",
-    backgroundColor: "#ffffff",
-    border: "1px solid #202123",
-    left: "240px",
-    top: "55px",
-    borderRadius: "5px",
-    padding: "10px",
-  });
+  const exportButton = createButton()
+  exportButton.style.position = "fixed";
+  exportButton.style.backgroundColor = "#ffffff";
+  exportButton.style.border = "1px solid #202123";
+  exportButton.style.borderRadius = "5px";
+  exportButton.style.padding = "10px";
+  exportButton.style.left = "240px";
+  exportButton.style.top = "55px";
+  exportButton.style.zIndex = 1000;
   document.body.appendChild(exportButton);
 
   // the input string to identify the prompt
-  const promptInputBlock = createPromptLabelEntry({
-    position: "fixed",
-    backgroundColor: 'rgba(250, 200, 250, 0.5)',
-    borderBottom: "2px solid #202123",
-    left: "240px",
-    top: "110px",
-    borderRadius: "5px",
-    padding: "10px",
-    width: "400px",
-    height: "30px",
-    opacity: 0.5,
-  });
+  const promptInputBlock = createPromptLabelEntry()
+  promptInputBlock.style.position = "fixed";
+  promptInputBlock.style.backgroundColor = 'rgba(250, 200, 250, 0.5)';
+  promptInputBlock.style.borderBottom = "2px solid #202123";
+  promptInputBlock.style.left = "240px";
+  promptInputBlock.style.top = "110px";
+  promptInputBlock.style.borderRadius = "5px";
+  promptInputBlock.style.padding = "10px";
+  promptInputBlock.style.width = "400px";
+  promptInputBlock.style.height = "30px";
+  promptInputBlock.style.opacity = 0.5;
   document.body.appendChild(promptInputBlock);
 
   // the input string to identify the researcher
-  const researcherInputBlock = createHumanLabelEntry({
-    position: "fixed",
-    backgroundColor: 'rgba(200, 250, 250, 0.5)',
-    borderBottom: "2px solid #202123",
-    left: "240px",
-    top: "165px",
-    borderRadius: "5px",
-    padding: "10px",
-    width: "400px",
-    height: "30px",
-    opacity: 0.5,
-  });
+  const researcherInputBlock = createHumanLabelEntry()
+  researcherInputBlock.style.position = "fixed";
+  researcherInputBlock.style.backgroundColor = 'rgba(200, 250, 250, 0.5)';
+  researcherInputBlock.style.borderBottom = "2px solid #202123";
+  researcherInputBlock.style.left = "240px";
+  researcherInputBlock.style.top = "165px";
+  researcherInputBlock.style.borderRadius = "5px";
+  researcherInputBlock.style.padding = "10px";
+  researcherInputBlock.style.width = "400px";
+  researcherInputBlock.style.height = "30px";
+  researcherInputBlock.style.opacity = 0.5;
   document.body.appendChild(researcherInputBlock);
 
   console.log("Buttons and input fields injected");

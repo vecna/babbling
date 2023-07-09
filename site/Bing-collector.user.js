@@ -46,54 +46,55 @@ async function injectBabblingElements() {
   // button "export" injected in the DOM
 
   const target = document.querySelector("#b_header");
-  target.innerHTML = "<p>Babbling Experiment!</p>";
+  target.innerHTML = "<small>(collect data to the babbling.computer experimental server)</small>";
   target.style.textAlign = "center";
 
-  const exportButton = createButton({
-    backgroundColor: "#ffffff",
-    border: "1px solid #202123",
-    borderRadius: "5px",
-    padding: "10px",
-  });
+  /* classical button with a couple of emojis */
+  const exportButton = createButton()
+  if (exportButton) {
+    exportButton.style.backgroundColor = "#ffffff";
+    exportButton.style.border = "1px solid #202123";
+    exportButton.style.borderRadius = "5px";
+    exportButton.style.padding = "10px";
 
-  if (exportButton)
     target
       .appendChild(exportButton);
+  }
 
   // the input string to identify the prompt
-  const promptInputBlock = createPromptLabelEntry({
-    backgroundColor: 'rgba(250, 200, 250, 0.5)',
-    borderBottom: "2px solid #202123",
-    borderRadius: "5px",
-    padding: "10px",
-    width: "400px",
-    height: "30px",
-    opacity: 0.5,
-  });
+  const promptInputBlock = createPromptLabelEntry();
+  if (promptInputBlock) {
+    promptInputBlock.style.backgroundColor = 'rgba(250, 200, 250, 0.5)';
+    promptInputBlock.style.borderBottom = "2px solid #202123";
+    promptInputBlock.style.borderRadius = "5px";
+    promptInputBlock.style.padding = "10px";
+    promptInputBlock.style.width = "300px";
+    promptInputBlock.style.height = "14px";
+    promptInputBlock.style.opacity = 0.5;
 
-  if (promptInputBlock)
     target
       .appendChild(promptInputBlock);
+  }
 
   // the input string to identify the researcher
-  const researcherInputBlock = createHumanLabelEntry({
-    backgroundColor: 'rgba(200, 250, 250, 0.5)',
-    borderBottom: "2px solid #202123",
-    borderRadius: "5px",
-    padding: "10px",
-    width: "400px",
-    height: "30px",
-    opacity: 0.5,
-  });
+  const researcherInputBlock = createHumanLabelEntry();
+  if (researcherInputBlock) {
+    researcherInputBlock.style.backgroundColor = 'rgba(200, 250, 250, 0.5)';
+    researcherInputBlock.style.borderBottom = "2px solid #202123";
+    researcherInputBlock.style.borderRadius = "5px";
+    researcherInputBlock.style.padding = "10px";
+    researcherInputBlock.style.width = "300px";
+    researcherInputBlock.style.height = "14px";
+    researcherInputBlock.style.opacity = 0.5;
 
-  if (researcherInputBlock)
     target
       .appendChild(researcherInputBlock);
+  }
 
   // Event handler for the click
   exportButton.addEventListener('click', async function () {
-    // This is the logic to pick the URL, create the pad
 
+    // This is the logic to pick the URL, create the pad
     const researcherId = document.querySelector('#researcher--id')?.value || 'no-researcher-id';
     const promptId = document.querySelector('#prompt--id')?.value || 'no-prompt-id';
 
@@ -154,7 +155,7 @@ function shadowRooter(element, listOfSelectors) {
         memo.shadowRoot.querySelector(e) :
         memo.querySelector(e);
 
-      if(!retval) {
+      if (!retval) {
         const x = memo.querySelector(e);
         /* in this case the selector chain is invalid, and we mark it 
            with a dotted border twice as big as the previous one.
@@ -188,11 +189,11 @@ async function handleChatLeafs(chatLeafs, promptId, researcherId) {
      * the answer is the second */
 
     const answerElement = shadowRooter(e, ['[source="bot"]', 'cib-message[type="text"]',
-      'cib-shared', '.content', '.ac-textBlock' ]);
+      'cib-shared', '.content', '.ac-textBlock']);
     const promptElement = shadowRooter(e, ['[source="user"]', 'cib-message',
-      '.text-message-content' ]);
+      '.text-message-content']);
     const attributions = shadowRooter(e, ['[source="bot"]', 'cib-message[type="text"]',
-      'div.footer', 'cib-message-attributions', '.attribution-container' ]);
+      'div.footer', 'cib-message-attributions', '.attribution-container']);
 
     console.log(promptElement, answerElement, attributions);
 
@@ -245,7 +246,7 @@ async function handleChatLeafs(chatLeafs, promptId, researcherId) {
 
     answerRetval.type = 'answer';
     answerRetval.text = answerElement.textContent;
-    answerRetval.attributions = attributions ? _.map(attributions.querySelectorAll('a'), function(href) {
+    answerRetval.attributions = attributions ? _.map(attributions.querySelectorAll('a'), function (href) {
       return {
         text: href.textContent,
         href: href.getAttribute('href'),
