@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bing I/O collector
 // @namespace    https://babbling.computer
-// @version      0.1.39
+// @version      0.1.57
 // @description  A small tool to weight actual impact of prompt engineering on chatbot
 // @author       vecna
 // @match        https://www.bing.com/*
@@ -24,7 +24,6 @@
   babblingText.textContent = 'Load Buttons';
   babblingText.style.cursor = 'copy';
   babblingText.addEventListener('mouseover', async function () {
-    console.log('mouseover');
     await injectBabblingElements();
   });
 
@@ -112,12 +111,14 @@ async function injectBabblingElements() {
 
     } catch (error) {
       console.log("Error in extracting chats", error.message);
-      return;
+      throw error;
+      // return;
     }
 
-    console.log(`FYI we're talking ${JSON.stringify(material).length} bytes`);
+    const padName = `${promptId}-${_.random(0, 99)}-${new Date().toISOString().replace(/\..*$/, '')}`;
 
-    const padName = `${promptId}-${researcherId}-${new Date().toISOString()}`;
+    console.log(`FYI we're talking ${JSON.stringify(material).length} bytes, pad name is ${padName}`);
+
     const padUrl = `${etherpad.server}/p/${padName}`;
     const url = `${etherpad.server}/api/1/createPad?apikey=${etherpad.necessaryThing}&padID=${padName}`;
 
@@ -131,29 +132,68 @@ async function injectBabblingElements() {
   })
 }
 
+/* function getRandomHTMLColor return a random color in HTML format */
+function getRandomHTMLColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 3; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  /* this should never be red-reddish */
+  color[1] = _.toString(_.random(0, 9));
+  return color;
+}
+
+function shadowRooter(element, listOfSelectors) {
+  try {
+    let incremental = 1;
+    return _.reduce(listOfSelectors, function (memo, e) {
+
+      let retval = (memo.shadowRoot) ?
+        memo.shadowRoot.querySelector(e) :
+        memo.querySelector(e);
+
+      if(!retval) {
+        const x = memo.querySelector(e);
+        /* in this case the selector chain is invalid, and we mark it 
+           with a dotted border twice as big as the previous one.
+           this case override the previous approach, this means I'm mixing
+           patterns and I'm sorry with my future self that 
+           has to debug this :poop-emoji: */
+        x.style.border = `${incremental}px dotted red`;
+        return x;
+      }
+
+      if (retval) {
+        retval.style.border = `${incremental}px solid ${getRandomHTMLColor()}`;
+        incremental++;
+      }
+
+      return retval;
+    }, element);
+  } catch (error) {
+    console.log(`Error in shadowRooter: ${error.message}`);
+    console.log(error.stack);
+    return null;
+  }
+}
+
 async function handleChatLeafs(chatLeafs, promptId, researcherId) {
   console.log(`This chat count of ${chatLeafs.length} interactions`);
 
   const nested = _.map(chatLeafs, function (e, exchangeIndex) {
+    /* each entry here is a chat exchange, it has a prompt
+     * and an answer the prompt is the first element,
+     * the answer is the second */
 
-    /* each entry here is a chat exchange, it has a prompt and an answer */
-    const promptElement = e.shadowRoot
-      .querySelector('[source="user"]').shadowRoot
-      .querySelector('cib-message').shadowRoot
-      .querySelector('.text-message-content');
+    const answerElement = shadowRooter(e, ['[source="bot"]', 'cib-message[type="text"]',
+      'cib-shared', '.content', '.ac-textBlock' ]);
+    const promptElement = shadowRooter(e, ['[source="user"]', 'cib-message',
+      '.text-message-content' ]);
+    const attributions = shadowRooter(e, ['[source="bot"]', 'cib-message[type="text"]',
+      'div.footer', 'cib-message-attributions', '.attribution-container' ]);
 
-    const answerElement = e.shadowRoot
-      .querySelector('[source="bot"]').shadowRoot
-      .querySelector('cib-message[type="text"]').shadowRoot
-      .querySelector('cib-shared').shadowRoot
-      .querySelector('.message');
-
-    const attributions = e.shadowRoot
-      .querySelector('[source="bot"]').shadowRoot
-      .querySelector('cib-message[type="text"]').shadowRoot
-      .querySelector('div.footer');
-
-    console.log(promptElement.textContent, answerElement, attributions);
+    console.log(promptElement, answerElement, attributions);
 
     const turndownService = new TurndownService();
     /* this initialize the answer */
@@ -202,9 +242,16 @@ async function handleChatLeafs(chatLeafs, promptId, researcherId) {
       interactionCounter: ((exchangeIndex + 1) * 2),
     };
 
-    answerRetval.type = 'answer'
+    answerRetval.type = 'answer';
     answerRetval.text = answerElement.textContent;
-    answerRetval.attributions = attributions.innerHTML;
+    answerRetval.attributions = attributions ? _.map(attributions.querySelectorAll('a'), function(href) {
+      return {
+        text: href.textContent,
+        href: href.getAttribute('href'),
+        "data-citationid": href.getAttribute('data-citationid'),
+        title: href.getAttribute('title'),
+      }
+    }) : [];
     answerRetval.md = turndownService.turndown(answerElement.innerHTML)
 
     return [promptRetval, answerRetval];
