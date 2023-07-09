@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bing I/O collector
-// @namespace    https://babbling.computer
-// @version      0.1.57
+// @namespace    BingChat-babbling-collector
+// @version      0.2.0
 // @description  A small tool to weight actual impact of prompt engineering on chatbot
 // @author       vecna
 // @match        https://www.bing.com/*
@@ -115,7 +115,8 @@ async function injectBabblingElements() {
       // return;
     }
 
-    const padName = `${promptId}-${_.random(0, 99)}-${new Date().toISOString().replace(/\..*$/, '')}`;
+    const dateString = new Date().toISOString().replace(/\..*$/, '').replace(/:/g, '');
+    const padName = `B-${promptId}-${_.random(0, 99)}-${dateString}`;
 
     console.log(`FYI we're talking ${JSON.stringify(material).length} bytes, pad name is ${padName}`);
 
