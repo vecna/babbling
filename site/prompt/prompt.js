@@ -130,9 +130,9 @@ function produceHTML(prompts) {
 
         const promptHTML = `<div class="grid-item">
           <div class="prompt" id="prompt--${prompt.hash}">
-            ${parameters}  
-            <br/>
-            ${prompt.subject}
+${parameters}  
+<br/>
+${prompt.subject}
           </div>
           <div class="button-list">
             <button class="prompt-copy" id="copy--${prompt.hash}" onclick="copyToClipboard('${prompt.hash}')">Copy prompt</button>
