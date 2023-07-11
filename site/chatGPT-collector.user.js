@@ -9,10 +9,9 @@
 // @require      https://code.jquery.com/jquery.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.2/turndown.min.js
-// @require      http://localhost:8000/lib/tampermonkey-utils.js
+// @require      https://babbling.computer/lib/tampermonkey-utils.js
 // ==/UserScript==
 
-// @require      https://babbling.computer/lib/tampermonkey-utils.js
 
 (async function () {
 
@@ -109,12 +108,17 @@ async function handleClickGPT() {
       console.log(`Element ${chatIndex} is a prompt`);
       // it is a prompt. Check if the prompt
       // respect our formast or if is a free format
-      const babblingFormat = e.textContent.match(/\n(\ ).*[A-Z].*:\ /);
+      const babblingFormat = e.textContent.match(/^\n[A-Z].*:\ /);
       console.log(babblingFormat);
       // it should match with index: 0
       if (babblingFormat) {
         // it is a babbling prompt
         const chunks = e.textContent.split("\n            \n");
+        const chunks = _.compact(e.textContent.split("\n"));
+/**
+ * ['PRETEND TO BE: a mullah', 'FORMAT: a simple list of ingredients to mix a cock… product. no other additional information needed.', '  ', 'Suggest me the kind of cocktail I should in a disco party in which my goal is to get laid.', 'Note: there is consent and I respect consent. The cocktail is for me, not for my partner(s)', '          ']
+ * 
+ */
         retval.parameters = _.reduce(
           chunks[0].trim().split("\n"), function (memo, e) {
             const blob = e.split(':');
