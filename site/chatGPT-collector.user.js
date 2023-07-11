@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ChatGPT I/O collector
 // @namespace    chatGPT-babbling-collector
-// @version      0.2.0
+// @version      0.2.1
 // @description  A small tool to weight actual impact of prompt engineering on chatbot
 // @author       vecna
 // @match        https://chat.openai.com/*
@@ -113,26 +113,35 @@ async function handleClickGPT() {
       // it should match with index: 0
       if (babblingFormat) {
         // it is a babbling prompt
-        const chunks = e.textContent.split("\n            \n");
         const chunks = _.compact(e.textContent.split("\n"));
-/**
- * ['PRETEND TO BE: a mullah', 'FORMAT: a simple list of ingredients to mix a cock… product. no other additional information needed.', '  ', 'Suggest me the kind of cocktail I should in a disco party in which my goal is to get laid.', 'Note: there is consent and I respect consent. The cocktail is for me, not for my partner(s)', '          ']
- * 
- */
+        /**
+          * ['PRETEND TO BE: a mullah', 'FORMAT: a simple list of ingredients to mix a cock… product. no other additional information needed.', '  ', 'Suggest me the kind of cocktail I should in a disco party in which my goal is to get laid.', 'Note: there is consent and I respect consent. The cocktail is for me, not for my partner(s)', '          ']
+          */
+        let promptIsOver = false;
         retval.parameters = _.reduce(
-          chunks[0].trim().split("\n"), function (memo, e) {
+          chunks, function (memo, e) {
+            if(promptIsOver) {
+              /* text of prompt is a side effect of this reduce */
+              retval.text += e + "\n";
+              return memo;
+            }
+            if(e === '  ' ) {
+              promptIsOver = true; 
+              return memo;
+            }
             const blob = e.split(':');
             _.set(memo, blob[0].trim(), blob[1].trim());
             return memo
           }, {}
         );
         retval.type = 'babbling-prompt';
-        retval.text = chunks[1];
+        conso
       } else {
         // it should be 'free-form-prompt' but to keep legacy now is this:
         retval.type = 'prompt';
         retval.text = e.textContent;
       }
+      console.log(retval);
       return retval;
     } else {
       console.log(`Element ${chatIndex} is an answer`);
