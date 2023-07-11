@@ -135,7 +135,6 @@ async function handleClickGPT() {
           }, {}
         );
         retval.type = 'babbling-prompt';
-        conso
       } else {
         // it should be 'free-form-prompt' but to keep legacy now is this:
         retval.type = 'prompt';
