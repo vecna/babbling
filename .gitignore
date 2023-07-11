@@ -2,6 +2,7 @@
 babbling
 *_API_KEY
 semantics/*
+merges/*
 *-dump.json
 
 # Logs
