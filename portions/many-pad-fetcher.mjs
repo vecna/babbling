@@ -1,9 +1,12 @@
 #!node_modules/.bin/zx
 
-import hash from './id.mjs';
-import semanticizeText from './semantic.mjs';
 import _ from 'lodash';
 import fs from 'fs-extra';
+const querystring = require('querystring');
+
+import markdownS from 'markdown-it';
+import markdownitPlainText from 'markdown-it-plain-text'
+const markdownIT = markdownS().use(markdownitPlainText);
 
 /* This script just test the connection to the etherpad server */
 
@@ -31,6 +34,7 @@ for (const pad of pads) {
 }
 
 /* now we've the data with all the pads, we need to produce three CSV files */
+const experiment = "exp1v3";
 
 /* first file would be the CSV with URLs */
 const linkdata = _.reduce(_.flatten(data), function (memo, chat) {
@@ -40,7 +44,7 @@ const linkdata = _.reduce(_.flatten(data), function (memo, chat) {
   } else {
     _.each(chat.attributions, function (href, i) {
       const entry = {
-        linkNumber: i,
+        render: i + 1,
         ...memo.cache,
         ..._.pick(href, ['href', 'data-citationid', 'title'])
       };
@@ -52,33 +56,67 @@ const linkdata = _.reduce(_.flatten(data), function (memo, chat) {
 }, { final: [], cache: {} });
 
 const linkCSV = jsonToCSV(linkdata.final);
-const csvLinkData = path.join('merges', "exp1-links.csv");
+const csvLinkData = path.join('merges', `${experiment}-links.csv`);
 console.log(`Saving Link CSV as ${csvLinkData}`);
 fs.writeFileSync(csvLinkData, linkCSV, 'utf-8');
 
 /* second file would be with all the answers */
-const qadata = _.reduce(_.flatten(data), function(memo, chat) {
+const qadata = _.reduce(_.flatten(data), function (memo, chat) {
   if (chat.type === 'prompt') {
     memo.cache = _.pick(chat, ['researcherId', 'promptId', 'interactionCounter']);
     memo.cache.prompt = chat.text.trim();
   } else {
     const entry = {
       ...memo.cache,
-      answer: chat.md.trim(),
+      answer: chat.md.trim().replace(/[\n\r]/g, '').replace(/"/g, '〃'),
+      html: markdownIT.render(chat.md.replace(/"/g, '〃').replace(/[\n\r]/g, '')),
+      text: markdownIT.plainText.replace(/[\n\r]/g, '').replace(/"/g, '〃'),
     }
     memo.final.push(entry);
     memo.cache = {};
   }
   return memo;
 
-}, { final: [], cache: {}});
+}, { final: [], cache: {} });
 
 const qaCSV = jsonToCSV(qadata.final);
-const csvQAData = path.join('merges', "exp1-qa.csv");
+const csvQAData = path.join('merges', `${experiment}-qa.csv`);
 console.log(`Saving Link CSV as ${csvQAData}`);
 fs.writeFileSync(csvQAData, qaCSV, 'utf-8');
 
+process.exit(1);
+/* third file would be with all the semantic annotations */
+const annotated = [];
+for (const entry of qadata.final) {
 
+  const parameters = {
+    token: settings.semantic.necessaryThing,
+    text: entry.text,
+    "social.hashtag": false,
+  };
+  const url =   settings.semantic.server;
+  const fullUrl = `${url}?${querystring.encode(parameters)}`
+
+  const r = await fetch(fullUrl);
+  if (!r.ok) {
+    console.log(`Error in accessing semanticize server: ${r.status}`);
+  }
+
+  const result = await r.json()
+  _.each(result.annotations, function (annotation, semanticNumber) {
+    const o = {
+      semanticNumber: semanticNumber + 1,
+      ..._.pick(annotation, ['confidence', 'title', 'uri', 'label' ]),
+      ..._.pick(entry, ['text', 'researcherId','promptId','interactionCounter','prompt']),
+    }
+    annotated.push(o);
+  });
+}
+
+const semanticCSV =  jsonToCSV(annotated);
+const semaFile = path.join('merges', `${experiment}-semantics.csv`);
+console.log(`Saving Link CSV as ${semaFile}`);
+fs.writeFileSync(semaFile, semanticCSV, 'utf-8');
 
 function jsonToCSV(jsonData) {
   const fline = _.keys(jsonData[0]);
