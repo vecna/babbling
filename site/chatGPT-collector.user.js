@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ChatGPT I/O collector
 // @namespace    chatGPT-babbling-collector
-// @version      0.2.1
+// @version      0.2.2
 // @description  A small tool to weight actual impact of prompt engineering on chatbot
 // @author       vecna
 // @match        https://chat.openai.com/*
@@ -118,6 +118,7 @@ async function handleClickGPT() {
           * ['PRETEND TO BE: a mullah', 'FORMAT: a simple list of ingredients to mix a cock… product. no other additional information needed.', '  ', 'Suggest me the kind of cocktail I should in a disco party in which my goal is to get laid.', 'Note: there is consent and I respect consent. The cocktail is for me, not for my partner(s)', '          ']
           */
         let promptIsOver = false;
+        retval.text = '';
         retval.parameters = _.reduce(
           chunks, function (memo, e) {
             if(promptIsOver) {
