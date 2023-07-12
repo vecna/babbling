@@ -1,5 +1,4 @@
 #!node_modules/.bin/zx
-
 import _ from 'lodash';
 import fs from 'fs-extra';
 const querystring = require('querystring');
@@ -14,6 +13,11 @@ console.log("This want a list of pads");
 
 if (!argv.padfile) {
   console.log(`The option --padfile is required`);
+  process.exit(1);
+}
+
+if (!argv.exp) {
+  console.log(`The option --exp is the experiment name: required`);
   process.exit(1);
 }
 
@@ -34,7 +38,7 @@ for (const pad of pads) {
 }
 
 /* now we've the data with all the pads, we need to produce three CSV files */
-const experiment = "exp1v3";
+const experiment = "exp1v4";
 
 /* first file would be the CSV with URLs */
 const linkdata = _.reduce(_.flatten(data), function (memo, chat) {
@@ -44,7 +48,7 @@ const linkdata = _.reduce(_.flatten(data), function (memo, chat) {
   } else {
     _.each(chat.attributions, function (href, i) {
       const entry = {
-        render: i + 1,
+        ranking: i + 1,
         ...memo.cache,
         ..._.pick(href, ['href', 'data-citationid', 'title'])
       };
@@ -56,7 +60,7 @@ const linkdata = _.reduce(_.flatten(data), function (memo, chat) {
 }, { final: [], cache: {} });
 
 const linkCSV = jsonToCSV(linkdata.final);
-const csvLinkData = path.join('merges', `${experiment}-links.csv`);
+const csvLinkData = path.join('merges', argv.exp, `${argv.exp}-links.csv`);
 console.log(`Saving Link CSV as ${csvLinkData}`);
 fs.writeFileSync(csvLinkData, linkCSV, 'utf-8');
 
@@ -79,12 +83,16 @@ const qadata = _.reduce(_.flatten(data), function (memo, chat) {
 
 }, { final: [], cache: {} });
 
-const qaCSV = jsonToCSV(qadata.final);
-const csvQAData = path.join('merges', `${experiment}-qa.csv`);
+/* const qaCSV = jsonToCSV(qadata.final);
+const csvQAData = path.join('merges', PATH BROKEN `${experiment}-qa.csv`);
 console.log(`Saving Link CSV as ${csvQAData}`);
-fs.writeFileSync(csvQAData, qaCSV, 'utf-8');
+fs.writeFileSync(csvQAData, qaCSV, 'utf-8'); */
 
-process.exit(1);
+const jsonQAData = path.join('merges', argv.exp, `${argv.exp}-qa.json`);
+fs.writeFileSync(jsonQAData,
+  JSON.stringify(qadata.final, null, 2),
+  'utf-8');
+
 /* third file would be with all the semantic annotations */
 const annotated = [];
 for (const entry of qadata.final) {
@@ -113,10 +121,13 @@ for (const entry of qadata.final) {
   });
 }
 
-const semanticCSV =  jsonToCSV(annotated);
-const semaFile = path.join('merges', `${experiment}-semantics.csv`);
+/* const semanticCSV =  jsonToCSV(annotated);
+const semaFile = path.join('merges', PATH BROKEN `${experiment}-semantics.csv`);
 console.log(`Saving Link CSV as ${semaFile}`);
-fs.writeFileSync(semaFile, semanticCSV, 'utf-8');
+fs.writeFileSync(semaFile, semanticCSV, 'utf-8'); */
+
+const jsonsemant = path.join('merges', argv.exp, `${argv.exp}-semantics.json`);
+fs.writeFileSync(jsonsemant, JSON.stringify(annotated, null, 2), 'utf-8');
 
 function jsonToCSV(jsonData) {
   const fline = _.keys(jsonData[0]);
@@ -138,7 +149,7 @@ async function processPad(padId) {
     console.log(`Pad "${padId}" has likely a wrong name: nothing to be done`);
     return null;
   }
-  const padfile = path.join('merges', `${padId}.json`);
+  const padfile = path.join('merges', argv.exp, `${padId}.json`);
 
   if (fs.existsSync(padfile)) {
     console.log(`Pad ${padfile} already fetched, returning cached`);
