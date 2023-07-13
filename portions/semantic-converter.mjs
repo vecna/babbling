@@ -3,7 +3,7 @@ import _ from 'lodash';
 import fs from 'fs-extra';
 import { argv } from 'zx';
 
-console.log(`This script produces a bunch of different output`);
+console.log(`This script produces a bunch of different output, take as input the semantics`);
 
 if (!argv.output) {
     console.log(`The option --output is required and would be a portion of the file name`);
@@ -20,38 +20,12 @@ if (!argv.semantic) {
 }
 const allthe = await fs.readJSON(argv.semantic);
 
-const content = _.filter(allthe, function(e) { return e.confidence > 0.8 })
+console.log(`Mandatory options are --erre or --labelCounter`);
 
-const result = [];
-_.each(_.groupBy(content, 'promptId'), function (plist, pid) {
-    console.log(`Prompt ${pid} has ${plist.length} stuff`);
-    _.each(_.groupBy(plist, 'interactionCounter'), function (selected, ic) {
-        console.log(`Prompt ${pid} ic ${ic} has ${selected.length} labels `);
-        /* now let's take all the unique occurences of labels */
-        const labels = _.uniq(_.map(selected, 'label'));
-        /* now for each label we need to count if all the researcher have it */
-        _.each(labels, function (label) {
-            const x = _.countBy(_.filter(selected, { label }), 'researcherId');
-            const y = _.keys(x);
-            console.log(`Label ${label} has ${y.length} = ${JSON.stringify(y)} and ${JSON.stringify(x)} `);
-            if(y.length == 6) {
-                console.log(`Removing ${label}`);
-            } else {
-                result.push({
-                    label,
-                    question: ic,
-                    appearedOnly: y.length,
-                    promptId: pid,
-                });
-            }
-        })
-    })
-});
-
-const fname = `merges/${argv.exp}/${argv.output}-non-overlapping-semantics.json`;
-console.log(`Writing ${fname} ${result.length} elements`);
-fs.writeFileSync(fname, JSON.stringify(result, null, 2));
-
+if (argv.erre)
+    erreProducer();
+if (argv.labelCounter)
+    labelCounter();
 
 /* {
     "semanticNumber": 1,
@@ -66,10 +40,50 @@ fs.writeFileSync(fname, JSON.stringify(result, null, 2));
     "prompt": "When did Mark Rutte become prime minister?"
    }, */
 
-const erre = _.map(content, function (e) {
-    return _.pick(e, ["label", "title", "confidence", "researcherId", "interactionCounter"])
-});
+function labelCounter() {
 
-const fout = `merges/${argv.exp}/${argv.output}.json`;
-fs.writeJSON(fout, erre)
-console.log(`File ${fout} produced `)
+    const content = _.filter(allthe, function (e) { return e.confidence > 0.8 })
+
+    const result = [];
+    _.each(_.groupBy(content, 'promptId'), function (plist, pid) {
+        console.log(`Prompt ${pid} has ${plist.length} stuff`);
+        _.each(_.groupBy(plist, 'interactionCounter'), function (selected, ic) {
+            console.log(`Prompt ${pid} ic ${ic} has ${selected.length} labels `);
+            /* now let's take all the unique occurences of labels */
+            const labels = _.uniq(_.map(selected, 'label'));
+            /* now for each label we need to count if all the researcher have it */
+            _.each(labels, function (label) {
+                const x = _.countBy(_.filter(selected, { label }), 'researcherId');
+                const y = _.keys(x);
+                console.log(`Label ${label} has ${y.length} = ${JSON.stringify(y)} and ${JSON.stringify(x)} `);
+                if (y.length == 6) {
+                    console.log(`Removing ${label}`);
+                } else {
+                    result.push({
+                        label,
+                        question: ic,
+                        appearedOnly: y.length,
+                        promptId: pid,
+                    });
+                }
+            })
+        })
+    });
+
+    const fname = `merges/${argv.exp}/${argv.output}-numered-semantics.json`;
+    console.log(`Writing ${fname} ${result.length} elements`);
+    fs.writeFileSync(fname, JSON.stringify(result, null, 2));
+
+}
+
+
+function erreProducer() {
+
+    const erre = _.map(allthe, function (e) {
+        return _.pick(e, ["label", "title", "confidence", "researcherId", "interactionCounter"])
+    });
+
+    const fout = `merges/${argv.exp}/${argv.output}-erre.json`;
+    fs.writeJSON(fout, erre)
+    console.log(`File ${fout} produced `)
+}

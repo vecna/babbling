@@ -37,9 +37,7 @@ for (const pad of pads) {
   }
 }
 
-/* now we've the data with all the pads, we need to produce three CSV files */
-const experiment = "exp1v4";
-
+console.log(`Link CSV generation:`)
 /* first file would be the CSV with URLs */
 const linkdata = _.reduce(_.flatten(data), function (memo, chat) {
   if (chat.type === 'prompt') {
@@ -54,6 +52,11 @@ const linkdata = _.reduce(_.flatten(data), function (memo, chat) {
       };
       memo.final.push(entry);
     })
+    if(chat?.attributions.length)
+      memo.cache = {};
+    if(memo.cache?.prompt?.length) {
+      console.log(`${memo.cache.promptId} ${memo.cache.researcherId} INTERACTION ${memo.cache.interactionCounter} has zero links!`);
+    }
     memo.cache = {};
   }
   return memo;
@@ -63,6 +66,18 @@ const linkCSV = jsonToCSV(linkdata.final);
 const csvLinkData = path.join('merges', argv.exp, `${argv.exp}-links.csv`);
 console.log(`Saving Link CSV as ${csvLinkData}`);
 fs.writeFileSync(csvLinkData, linkCSV, 'utf-8');
+
+const jsonLinkData = path.join('merges', argv.exp, `${argv.exp}-links.json`);
+console.log(`Saving Link JSON as ${jsonLinkData}`);
+fs.writeFileSync(jsonLinkData, JSON.stringify(linkdata.final, null ,2), 'utf-8');
+
+const dotcsv = _.reduce(linkdata.final, (memo, e) => {
+  memo += `"${e.researcherId.replace(/\ /, '_')}-${e.promptId}-${e.interactionCounter}","${e.href}"\n`;
+  return memo
+}, "one,two\n");
+const csvfiledot = path.join('merges', argv.exp, `${argv.exp}-dot.csv`);
+console.log(`Saving dot CSV as ${csvfiledot}`)
+fs.writeFileSync(csvfiledot, dotcsv, 'utf-8');
 
 /* second file would be with all the answers */
 const qadata = _.reduce(_.flatten(data), function (memo, chat) {
@@ -167,9 +182,9 @@ async function processPad(padId) {
   }
 
   const ethresults = await response.json();
+  console.log(JSON.stringify(ethresults, null ,2));
   const content = JSON.parse(ethresults.data.text);
   fs.writeFileSync(padfile, JSON.stringify(content, null, 2));
   console.log(`Written cache file ${padfile}`);
   return content;
 }
-
