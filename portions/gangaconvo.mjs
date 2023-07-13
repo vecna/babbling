@@ -65,3 +65,15 @@ function AIcentipAId() {
     fs.writeFileSync(centipf, JSON.stringify(result, null, 2));
     console.log(`Produced file ${centipf}`)
 }
+
+/*
+You have to act as an engine that processes text and produces JSON as a result.
+
+I will paste a JSON content, to you and you to read the field "text". For each of my submission, you need to analzyze the content and create  to create, for each sentence, an entry in a JSON collection. each entry has four fields: "subject" "verb" "object complement" "sentiment", and "counter".
+
+I need to:
+1) infer pronums and replace them with the subject name.
+2) at the head of the input you will find a JSON object that needs to be merged with each of your productions.
+3) when I type the keyword "TOTAL" you should produce a JSON collection with all the material generated in the same chat.
+
+*/
