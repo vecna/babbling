@@ -67,13 +67,20 @@ function AIcentipAId() {
 }
 
 /*
-You have to act as an engine that processes text and produces JSON as a result.
 
-I will paste a JSON content, to you and you to read the field "text". For each of my submission, you need to analzyze the content and create  to create, for each sentence, an entry in a JSON collection. each entry has four fields: "subject" "verb" "object complement" "sentiment", and "counter".
+You have to act like a robot that transform my JSON input into JSON output after some analysis. You should produce the JSON in the `code` tag, so I can easily select and copy paste later.
 
-I need to:
-1) infer pronums and replace them with the subject name.
-2) at the head of the input you will find a JSON object that needs to be merged with each of your productions.
-3) when I type the keyword "TOTAL" you should produce a JSON collection with all the material generated in the same chat.
+For each JSON object with a 'text' field, the 'text' need to be analyzed as such:
+a) GPT must split in sentences the text.
+b) GPT must infer the subject and replace pronouns with the subject's name, and report the full name.
+c) GPT analyze the sentence and extract the subject, verb, and object complement.
+d) The object complement is limited to one or two words maximum.
+e) the verb is limited to one word.
+f) GPT assign a unique "counter" value to each entry.
 
+After these steps, GPT creates a JSON collection that includes the researcherId, promptId, 
+and an array of entries representing each analyzed sentence.
+
+When the user write the keyword "TOTALE" GPT should take all the produced JSON and embed in every object also
+the related 'researcherId', 'promptId' and 'interactionCounter'.
 */
