@@ -4,6 +4,18 @@ A repository with tools for ~Large Language Model~ ChatBot independent assessmen
 
 The scripts normally works in conjunction with the servers (nocodb, etherpad, and other tools here available) installed in my server [babbling.computer](https://babbling.computer). **REMEMBER**: are all experiment free to fork and play with, **NO STABILITY GUARANTEE**, **ZERO RELIABILITY SHOULD BE EXPECTED**. It is my playground, it is broken until otherwise proven, and if something works is because of unexpected astral conjuction. And, of course, **DOCUMENTATION MIGHT CONTAIN FALSEHOOD**.
 
+### Reminder
+
+```
+ 721775 ?        Ss     0:18 tmux
+ 721778 pts/7    Ss     0:00  \_ -bash
+ 940770 pts/7    Sl+    9:29  |   \_ ./nocodb
+ 987866 pts/8    Ss     0:00  \_ -bash
+1341484 pts/8    Sl+    4:42  |   \_ node src/node/server.js
+1102455 pts/9    Ss+    0:00  \_ -bash
+2512507 pts/11   Ss+    0:00  \_ -bash
+```
+
 ### What and why?
 
 **Metamorphic testing**, confortably described in this nice blogpost: https://www.giskard.ai/knowledge/how-to-test-ml-models-4-metamorphic-testing is the first attempt I made.
